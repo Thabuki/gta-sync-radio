@@ -92,6 +92,8 @@ let carouselElement = null;
 let isTransitioning = false;
 let playAfterTransitionTimer = null;
 let lastPlayedStationId = null;
+let autoplayDebounceTimer = null;
+const AUTOPLAY_DEBOUNCE_MS = 200; // short debounce to avoid rapid retriggers
 const reduceMotion =
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -213,8 +215,10 @@ function focusStationByCard(cardEl, allowOpenModal = false) {
     if (stationIdx >= radioStations.length)
       stationIdx = stationIdx - radioStations.length;
 
-    // If this isn't the currently playing station, trigger static -> station handoff
+    // If this isn't the currently playing station, trigger static -> station handoff immediately
     if (lastPlayedStationId !== radioStations[stationIdx].id) {
+      if (playAfterTransitionTimer) clearTimeout(playAfterTransitionTimer);
+      if (autoplayDebounceTimer) clearTimeout(autoplayDebounceTimer);
       playStaticThenStation(radioStations[stationIdx]);
       lastPlayedStationId = radioStations[stationIdx].id;
     }
@@ -458,27 +462,40 @@ function updateCarousel(withTransition = true) {
 
   carouselElement.style.transform = `translateX(${translateX}px)`;
 
-  // Schedule playback when transition completes (or immediately if no transition)
+  // Cancel any pending autoplay debounce before scheduling a new one
+  if (autoplayDebounceTimer) {
+    clearTimeout(autoplayDebounceTimer);
+    autoplayDebounceTimer = null;
+  }
+  // Schedule playback when transition completes (or debounced if no transition)
   const currentStationData = radioStations[currentIndex];
   if (withTransition) {
     if (playAfterTransitionTimer) clearTimeout(playAfterTransitionTimer);
     playAfterTransitionTimer = setTimeout(() => {
       isTransitioning = false;
       // Only trigger playback handoff if not already playing this station
-      const audioEl = document.getElementById("audioPlayer");
       const alreadyThisStation = lastPlayedStationId === currentStationData.id;
       if (!alreadyThisStation) {
-        playStaticThenStation(currentStationData);
-        lastPlayedStationId = currentStationData.id;
+        // Debounce the autoplay slightly to avoid rapid nudge retriggers
+        autoplayDebounceTimer = setTimeout(() => {
+          // Confirm we're still pointing at the same station before playing
+          if (lastPlayedStationId !== currentStationData.id) {
+            playStaticThenStation(currentStationData);
+            lastPlayedStationId = currentStationData.id;
+          }
+        }, AUTOPLAY_DEBOUNCE_MS);
       }
     }, 320);
   } else {
     isTransitioning = false;
-    const audioEl = document.getElementById("audioPlayer");
     const alreadyThisStation = lastPlayedStationId === currentStationData.id;
     if (!alreadyThisStation) {
-      playStaticThenStation(currentStationData);
-      lastPlayedStationId = currentStationData.id;
+      autoplayDebounceTimer = setTimeout(() => {
+        if (lastPlayedStationId !== currentStationData.id) {
+          playStaticThenStation(currentStationData);
+          lastPlayedStationId = currentStationData.id;
+        }
+      }, AUTOPLAY_DEBOUNCE_MS);
     }
   }
 
