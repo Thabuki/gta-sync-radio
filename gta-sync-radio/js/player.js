@@ -2,6 +2,8 @@
 let currentStation = null;
 let audioPlayer = null;
 let syncInterval = null;
+let isSynced = false;
+let syncCheckInterval = null;
 
 // Initialize player
 function initPlayer() {
@@ -16,19 +18,35 @@ function initPlayer() {
       audioPlayer.play();
     }
   });
+
+  // Detect manual seeking/scrubbing - breaks sync
+  audioPlayer.addEventListener("seeking", () => {
+    if (currentStation && isSynced) {
+      isSynced = false;
+      updateResyncButtonState();
+    }
+  });
+
+  // Detect manual pause - breaks sync
+  audioPlayer.addEventListener("pause", () => {
+    if (currentStation && isSynced && !audioPlayer.ended) {
+      isSynced = false;
+      updateResyncButtonState();
+    }
+  });
 }
 
 // Setup resync button
 function setupResyncButton() {
   const resyncBtn = document.getElementById("resyncBtn");
   resyncBtn.addEventListener("click", () => {
-    if (currentStation) {
+    if (currentStation && !resyncBtn.disabled) {
       synchronizePlayback(currentStation);
       // Visual feedback
+      resyncBtn.classList.add("synced");
+      resyncBtn.disabled = true;
       resyncBtn.textContent = "✓ Synced!";
-      setTimeout(() => {
-        resyncBtn.textContent = "🕐 Re-sync to Clock";
-      }, 2000);
+      isSynced = true;
     }
   });
 }
@@ -75,7 +93,10 @@ function openRadio(station) {
 
   // Update current track display periodically
   if (syncInterval) clearInterval(syncInterval);
-  syncInterval = setInterval(() => updateCurrentTrack(station), 1000);
+  syncInterval = setInterval(() => {
+    updateCurrentTrack(station);
+    updateResyncButtonState();
+  }, 1000);
 }
 
 // Stop radio playback
@@ -88,9 +109,17 @@ function stopRadio() {
     clearInterval(syncInterval);
     syncInterval = null;
   }
+
+  // Reset sync state
+  isSynced = false;
+  const resyncBtn = document.getElementById("resyncBtn");
+  if (resyncBtn) {
+    resyncBtn.classList.remove("synced");
+    resyncBtn.disabled = false;
+    resyncBtn.textContent = "🕐 Re-sync to Clock";
+  }
+
   currentStation = null;
-  // Resume auto-rotate when modal closes
-  isPaused = false;
 }
 
 // Render the tracklist
@@ -130,8 +159,68 @@ function jumpToTrack(trackIndex) {
   // Set audio player to that position
   audioPlayer.currentTime = trackStartTime;
 
+  // Manual track jump breaks sync
+  isSynced = false;
+  updateResyncButtonState();
+
   // Update the current track display immediately
   updateCurrentTrack(currentStation);
+}
+
+// Check if player is still in sync (within 2 seconds tolerance)
+function checkSyncStatus(station) {
+  if (!audioPlayer || !station) return false;
+
+  const totalDuration = station.tracks.reduce(
+    (sum, track) => sum + track.duration,
+    0
+  );
+
+  const now = new Date();
+  const secondsSinceMidnight =
+    now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+
+  const expectedPosition = secondsSinceMidnight % totalDuration;
+  const currentPosition = audioPlayer.currentTime % totalDuration;
+
+  // Allow 2 second tolerance for sync
+  const syncTolerance = 2;
+  const timeDiff = Math.abs(expectedPosition - currentPosition);
+
+  return timeDiff <= syncTolerance;
+}
+
+// Update resync button appearance based on sync status
+function updateResyncButtonState() {
+  const resyncBtn = document.getElementById("resyncBtn");
+  if (!resyncBtn || !currentStation) return;
+
+  const isInSync = checkSyncStatus(currentStation);
+
+  // Only update if status changed
+  if (isInSync && !isSynced) {
+    // Just became synced
+    isSynced = true;
+    resyncBtn.classList.add("synced");
+    resyncBtn.disabled = true;
+    resyncBtn.textContent = "✓ Synced!";
+  } else if (!isInSync && isSynced) {
+    // Lost sync
+    isSynced = false;
+    resyncBtn.classList.remove("synced");
+    resyncBtn.disabled = false;
+    resyncBtn.textContent = "🕐 Re-sync to Clock";
+  }
+  // If button state matches isSynced flag, also update UI to be consistent
+  else if (isSynced && !resyncBtn.disabled) {
+    resyncBtn.classList.add("synced");
+    resyncBtn.disabled = true;
+    resyncBtn.textContent = "✓ Synced!";
+  } else if (!isSynced && resyncBtn.disabled) {
+    resyncBtn.classList.remove("synced");
+    resyncBtn.disabled = false;
+    resyncBtn.textContent = "🕐 Re-sync to Clock";
+  }
 }
 
 // Synchronize playback based on computer clock
@@ -152,6 +241,15 @@ function synchronizePlayback(station) {
 
   // Set the audio player to this position
   audioPlayer.currentTime = positionInLoop;
+  
+  // Wait for seek to complete before marking as synced
+  const handleSeeked = () => {
+    isSynced = true;
+    updateResyncButtonState();
+    audioPlayer.removeEventListener("seeked", handleSeeked);
+  };
+  audioPlayer.addEventListener("seeked", handleSeeked);
+  
   audioPlayer.play().catch((err) => {
     console.log("Auto-play prevented. User interaction required.");
   });

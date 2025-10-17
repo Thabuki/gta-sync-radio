@@ -1,16 +1,23 @@
 // Carousel functionality
 let currentIndex = 0;
+let visualIndex = 0; // Visual position including clones
 let carouselElement = null;
 let autoRotateInterval = null;
 let isPaused = false;
+let isTransitioning = false;
 
 // Initialize carousel
 function initCarousel() {
   carouselElement = document.getElementById("radioCarousel");
   renderRadioStations();
   setupCarouselControls();
-  updateCarousel();
-  startAutoRotate();
+
+  // Start at the first real station (after the clones)
+  visualIndex = 3; // 3 clones before
+  currentIndex = 0;
+  updateCarousel(false);
+
+  // Auto-rotation disabled
 }
 
 // Render radio station cards
@@ -69,25 +76,27 @@ function setupCarouselControls() {
   const carouselContainer = document.querySelector(".carousel-container");
 
   prevBtn.addEventListener("click", () => {
-    currentIndex =
-      (currentIndex - 1 + radioStations.length) % radioStations.length;
-    updateCarousel();
-    resetAutoRotate();
+    if (isTransitioning) return;
+    moveToPrevious();
   });
 
   nextBtn.addEventListener("click", () => {
-    currentIndex = (currentIndex + 1) % radioStations.length;
-    updateCarousel();
-    resetAutoRotate();
+    if (isTransitioning) return;
+    moveToNext();
   });
 
-  // Pause auto-rotate on hover
-  carouselContainer.addEventListener("mouseenter", () => {
-    isPaused = true;
-  });
+  // Mouse wheel navigation
+  carouselContainer.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    if (isTransitioning) return;
 
-  carouselContainer.addEventListener("mouseleave", () => {
-    isPaused = false;
+    // Scroll down/right = next station
+    // Scroll up/left = previous station
+    if (e.deltaY > 0 || e.deltaX > 0) {
+      moveToNext();
+    } else {
+      moveToPrevious();
+    }
   });
 
   // Keyboard navigation
@@ -100,6 +109,43 @@ function setupCarouselControls() {
       openRadio(radioStations[currentIndex]);
     }
   });
+}
+
+// Move to next station
+function moveToNext() {
+  visualIndex++;
+  currentIndex = (currentIndex + 1) % radioStations.length;
+  updateCarousel(true);
+  checkAndResetPosition();
+}
+
+// Move to previous station
+function moveToPrevious() {
+  visualIndex--;
+  currentIndex =
+    (currentIndex - 1 + radioStations.length) % radioStations.length;
+  updateCarousel(true);
+  checkAndResetPosition();
+}
+
+// Check if we need to reset position after reaching clones
+function checkAndResetPosition() {
+  const totalStations = radioStations.length;
+  const cloneOffset = 3;
+
+  // Wait for transition to complete
+  setTimeout(() => {
+    // If we're past the last clone, jump back to the first real station
+    if (visualIndex >= totalStations + cloneOffset) {
+      visualIndex = cloneOffset;
+      updateCarousel(false);
+    }
+    // If we're before the first clone, jump to the last real station
+    else if (visualIndex < cloneOffset) {
+      visualIndex = totalStations + cloneOffset - 1;
+      updateCarousel(false);
+    }
+  }, 300); // Match the CSS transition time
 }
 
 // Start automatic rotation
@@ -123,8 +169,8 @@ function resetAutoRotate() {
 // Select a station
 function selectStation(index) {
   currentIndex = index;
-  updateCarousel();
-  resetAutoRotate();
+  visualIndex = index + 3; // Add the clone offset
+  updateCarousel(true);
   // Open modal after a short delay to allow carousel animation
   setTimeout(() => {
     openRadio(radioStations[currentIndex]);
@@ -132,20 +178,30 @@ function selectStation(index) {
 }
 
 // Update carousel position and styling
-function updateCarousel() {
+function updateCarousel(withTransition = true) {
   const cards = document.querySelectorAll(".radio-card");
   const cardWidth = 220; // card width + gap
   const offset = window.innerWidth <= 768 ? 170 : cardWidth;
 
-  // Calculate the center position
-  // Add offset for the cloned cards at the beginning (3 cards)
-  const cloneOffset = 3;
+  // Calculate the center position using visualIndex
   const centerOffset = carouselElement.offsetWidth / 2 - cardWidth / 2;
-  const translateX = centerOffset - (currentIndex + cloneOffset) * offset;
+  const translateX = centerOffset - visualIndex * offset;
+
+  // Enable or disable transition
+  if (withTransition) {
+    carouselElement.style.transition = "transform 0.3s ease";
+    isTransitioning = true;
+    setTimeout(() => {
+      isTransitioning = false;
+    }, 300);
+  } else {
+    carouselElement.style.transition = "none";
+    isTransitioning = false;
+  }
 
   carouselElement.style.transform = `translateX(${translateX}px)`;
 
-  // Update active state
+  // Update active state based on currentIndex
   cards.forEach((card, cardIndex) => {
     const dataIndex = parseInt(card.dataset.index);
     const actualIndex =
@@ -153,7 +209,7 @@ function updateCarousel() {
       radioStations.length;
     card.classList.toggle(
       "active",
-      actualIndex === currentIndex && cardIndex === currentIndex + cloneOffset
+      actualIndex === currentIndex && cardIndex === visualIndex
     );
   });
 
