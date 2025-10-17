@@ -62,12 +62,14 @@ function createStationCard(station, index) {
 // Center the clicked card (clone or real) and select it
 function focusStationByCard(cardEl) {
   if (isTransitioning) return;
-  const cards = Array.from(document.querySelectorAll('.radio-card'));
+  const cards = Array.from(document.querySelectorAll(".radio-card"));
   const cardIndexInDom = cards.indexOf(cardEl);
   if (cardIndexInDom === -1) return;
 
   const dataIndex = parseInt(cardEl.dataset.index);
-  const actualIndex = ((dataIndex % radioStations.length) + radioStations.length) % radioStations.length;
+  const actualIndex =
+    ((dataIndex % radioStations.length) + radioStations.length) %
+    radioStations.length;
 
   // If the clicked card is already centered and selected, open immediately
   if (cardIndexInDom === visualIndex && actualIndex === currentIndex) {
@@ -127,9 +129,9 @@ function setupCarouselControls() {
   });
 
   // Delegated click handling to ensure card clicks are captured reliably
-  listEl.addEventListener('click', (e) => {
+  listEl.addEventListener("click", (e) => {
     if (isTransitioning) return;
-    const card = e.target.closest('.radio-card');
+    const card = e.target.closest(".radio-card");
     if (!card) return;
     focusStationByCard(card);
   });
@@ -172,7 +174,7 @@ function checkAndResetPosition(onAfterTransition) {
       updateCarousel(false);
     }
     isTransitioning = false;
-    if (typeof onAfterTransition === 'function') onAfterTransition();
+    if (typeof onAfterTransition === "function") onAfterTransition();
   };
 
   carouselElement.addEventListener("transitionend", onTransitionEnd);
@@ -190,7 +192,7 @@ function checkAndResetPosition(onAfterTransition) {
       updateCarousel(false);
     }
     isTransitioning = false;
-    if (typeof onAfterTransition === 'function') onAfterTransition();
+    if (typeof onAfterTransition === "function") onAfterTransition();
   }, 500);
 }
 
