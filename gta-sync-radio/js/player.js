@@ -241,7 +241,7 @@ function synchronizePlayback(station) {
 
   // Set the audio player to this position
   audioPlayer.currentTime = positionInLoop;
-  
+
   // Wait for seek to complete before marking as synced
   const handleSeeked = () => {
     isSynced = true;
@@ -249,7 +249,7 @@ function synchronizePlayback(station) {
     audioPlayer.removeEventListener("seeked", handleSeeked);
   };
   audioPlayer.addEventListener("seeked", handleSeeked);
-  
+
   audioPlayer.play().catch((err) => {
     console.log("Auto-play prevented. User interaction required.");
   });
