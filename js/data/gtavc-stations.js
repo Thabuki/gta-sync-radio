@@ -261,7 +261,7 @@ const viceCityStations = [
     game: "gtavc",
     dj: "Adam First",
     genre: "New Wave/Synthpop",
-    logo: "img/gtavc/flash-fm.webp",
+    logo: "img/gtavc/wave-103.svg",
     audioFile: "media/gtavc/wave-103.mp3",
     tracks: [
       {
