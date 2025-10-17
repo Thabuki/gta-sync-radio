@@ -234,7 +234,7 @@ const gtasaStations = [
     name: "WCTR",
     dj: "Various Hosts",
     genre: "Talk Radio",
-    logo: "img/gtasa/wctr.webp",
+    logo: "img/gtasa/wctr.png",
     game: "gtasa",
     audioFile: "media/gtasa/wctr.mp3",
     tracks: [

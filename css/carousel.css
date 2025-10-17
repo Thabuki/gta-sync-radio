@@ -2,7 +2,7 @@
 .game-filter-row {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -21,7 +21,7 @@
   font-weight: bold;
   margin: 20px 0 10px 0;
   color: var(--theme-accent, #e6c200);
-  text-align: left;
+  text-align: center;
 }
 /* Carousel Styles */
 .carousel-container {

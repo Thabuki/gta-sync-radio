@@ -431,27 +431,33 @@ function updateCarousel(withTransition = true) {
   const gapStr = carouselStyles.gap || carouselStyles.columnGap || "20";
   let gap = parseFloat(gapStr);
   if (Number.isNaN(gap)) gap = 20;
+  // Account for internal left padding on the flex track so centering is precise
+  const paddingLeftStr = carouselStyles.paddingLeft || "0";
+  let paddingLeft = parseFloat(paddingLeftStr);
+  if (Number.isNaN(paddingLeft)) paddingLeft = 0;
 
-  // Use the actual card element width; fallback to 200px flex-basis if unavailable
+  // Use the actual card layout width (ignores transforms); fallback to 200px
   let cardWidth = 200;
   if (firstCard) {
-    const rect = firstCard.getBoundingClientRect();
-    if (rect && rect.width) {
-      cardWidth = rect.width;
-    }
+    const w = firstCard.offsetWidth;
+    if (w) cardWidth = w;
   }
   const offset = cardWidth + gap;
 
-  // Calculate the center position using the actual centered card
+  // Calculate the center position using the wrapper (not the transformed track)
+  const wrapper = document.querySelector(".carousel-wrapper");
   let centerOffset = 0;
   if (cards[visualIndex]) {
-    const rect = cards[visualIndex].getBoundingClientRect();
-    const carouselRect = carouselElement.getBoundingClientRect();
-    centerOffset = carouselRect.width / 2 - rect.width / 2;
+    const targetCard = cards[visualIndex];
+    const wrapperWidth = (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
+    const targetWidth = targetCard.offsetWidth || cardWidth;
+    centerOffset = wrapperWidth / 2 - targetWidth / 2;
   } else {
-    centerOffset = carouselElement.offsetWidth / 2 - cardWidth / 2;
+    const wrapperWidth = (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
+    centerOffset = wrapperWidth / 2 - cardWidth / 2;
   }
-  const translateX = centerOffset - visualIndex * offset;
+  // Subtract the cumulative offset including initial left padding
+  const translateX = centerOffset - (visualIndex * offset + paddingLeft);
 
   // Enable or disable transition
   if (withTransition) {
