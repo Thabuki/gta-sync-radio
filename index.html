@@ -20,6 +20,11 @@
       </header>
 
       <div class="carousel-container">
+        <div class="swipe-indicator" id="swipeIndicator" aria-hidden="true">
+          <span class="swipe-arrow">&#8592;</span>
+          <span class="swipe-dots">&#8226; &#8226; &#8226;</span>
+          <span class="swipe-arrow">&#8594;</span>
+        </div>
         <button class="carousel-arrow carousel-arrow-left" id="prevBtn">
           ‹
         </button>
@@ -53,6 +58,13 @@
         </div>
 
         <div class="audio-player">
+          <div id="audioErrorModal" class="audio-error-modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="audioErrorTitle">
+            <div class="error-content">
+              <h2 id="audioErrorTitle">Audio Error</h2>
+              <p id="audioErrorMsg">Failed to load or play audio.</p>
+              <button id="audioRetryBtn" class="retry-btn">Retry</button>
+            </div>
+          </div>
           <audio
             id="audioPlayer"
             controls
@@ -67,11 +79,12 @@
             <p id="currentTrack" class="current-track"></p>
             <button id="resyncBtn" class="resync-btn">🕐 Re-sync</button>
           </div>
+          <div class="tracklist">
+            <h3>Tracklist</h3>
+            <ul id="tracklistContent"></ul>
+          </div>
         </div>
-
-        <div class="tracklist">
-          <h3>Tracklist</h3>
-          <ul id="tracklistContent"></ul>
+            <!-- Spinner removed -->
         </div>
       </div>
     </div>

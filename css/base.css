@@ -1,3 +1,47 @@
+/* Audio error modal */
+.audio-error-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 100;
+}
+.audio-error-modal[hidden] {
+  display: none !important;
+}
+.audio-error-modal .error-content {
+  background: #222;
+  color: #fff;
+  border-radius: 10px;
+  padding: 32px 28px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+.audio-error-modal h2 {
+  margin-top: 0;
+  color: #ff4a4a;
+}
+.audio-error-modal .retry-btn {
+  margin-top: 18px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  background: var(--accent, #4a90e2);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.audio-error-modal .retry-btn:hover {
+  background: #357abd;
+}
+/* Spinner styles removed */
 .theme-gtasa {
   --theme-bg: #1a2d1a;
   --theme-accent: #e6c200;
@@ -15,6 +59,10 @@
   --surface: #f0f4ff;
   --text-on-accent: #ffffff;
   --text-primary: #333333;
+  /* Scrollbar (defaults) */
+  --scrollbar-track: #f1f1f1;
+  --scrollbar-thumb: var(--accent);
+  --scrollbar-thumb-hover: #357abd; /* a darker blue for hover */
 }
 
 /* Future themes can override these vars by applying a class on <body> */
@@ -24,6 +72,9 @@
   --accent: #4a90e2;
   --accent-2: #4a90e2;
   --surface: #f0f4ff;
+  --scrollbar-track: #eaf2ff;
+  --scrollbar-thumb: #4a90e2;
+  --scrollbar-thumb-hover: #357abd;
 }
 
 /* Vice City theme (neon pink/teal vibes) */
@@ -33,6 +84,9 @@
   --accent: #ea7f99;
   --accent-2: #ea7f99;
   --surface: #f3eef9; /* soft lilac surface */
+  --scrollbar-track: #fbe6f1;
+  --scrollbar-thumb: #ea7f99;
+  --scrollbar-thumb-hover: #ff5fa2;
 }
 
 /* San Andreas theme placeholder (to be tuned) */
@@ -42,6 +96,9 @@
   --accent: #7a9b5f;
   --accent-2: #7a9b5f;
   --surface: #e9f1f4; /* cool grey */
+  --scrollbar-track: #e7efd9;
+  --scrollbar-thumb: #7a9b5f;
+  --scrollbar-thumb-hover: #5f7d48;
 }
 
 * {
@@ -56,6 +113,25 @@ body {
   min-height: 100vh;
   padding: 20px;
   color: var(--text-primary);
+  /* Firefox scrollbar */
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+/* WebKit scrollbars (Chrome, Edge, Safari) */
+body::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+body::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
 }
 
 .container {

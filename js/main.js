@@ -9,6 +9,17 @@ const radioStations = [
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
+  // Randomize starting station unless lastStationId is set
+  const numClones = 3;
+  let randomIndex = Math.floor(Math.random() * radioStations.length);
+  // Only randomize if no persisted selection
+  if (!localStorage.getItem("lastStationId")) {
+    window.currentIndex = randomIndex;
+    window.visualIndex = randomIndex + numClones;
+    try {
+      localStorage.setItem("lastStationId", radioStations[randomIndex].id);
+    } catch {}
+  }
   initCarousel();
   initPlayer();
   // Game filter event

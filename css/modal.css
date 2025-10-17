@@ -209,13 +209,10 @@ audio::-webkit-media-controls-panel {
   padding: 10px;
   border-bottom: 1px solid #eee;
   transition: background 0.2s;
-  cursor: pointer;
+  cursor: default;
 }
 
-.tracklist li:hover {
-  background: #f9f9f9;
-  padding-left: 15px;
-}
+/* hover styles removed for static list */
 
 .tracklist li.playing {
   background: #f0f4ff;
@@ -232,13 +229,10 @@ audio::-webkit-media-controls-panel {
   color: #ff9800;
   font-style: italic;
   opacity: 0.8;
-  cursor: pointer;
+  cursor: default;
 }
 
-.tracklist li.commercial-track:hover {
-  background: #fff3d6;
-  opacity: 1;
-}
+/* hover styles removed for static list */
 
 .tracklist li.commercial-track.playing {
   background: #ffe0b2;
@@ -251,16 +245,17 @@ audio::-webkit-media-controls-panel {
   width: 8px;
 }
 
+
 .tracklist ul::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--scrollbar-track);
   border-radius: 10px;
 }
 
 .tracklist ul::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 
 .tracklist ul::-webkit-scrollbar-thumb:hover {
-  background: #764ba2;
+  background: var(--scrollbar-thumb-hover);
 }

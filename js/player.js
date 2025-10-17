@@ -7,11 +7,46 @@ let syncCheckInterval = null;
 
 // Initialize player
 function initPlayer() {
+  // Error modal logic
+  const audioErrorModal = document.getElementById("audioErrorModal");
+  const audioErrorMsg = document.getElementById("audioErrorMsg");
+  const audioRetryBtn = document.getElementById("audioRetryBtn");
+
+  function showErrorModal(msg) {
+    if (audioErrorModal) {
+      audioErrorMsg.textContent = msg || "Failed to load or play audio.";
+      audioErrorModal.hidden = false;
+    }
+    // Spinner logic removed
+  }
+  function hideErrorModal() {
+    if (audioErrorModal) audioErrorModal.hidden = true;
+  }
+  if (audioPlayer) {
+    audioPlayer.addEventListener("error", function (e) {
+      showErrorModal(
+        "Failed to load or play audio. Please check your connection or try again."
+      );
+    });
+  }
+  if (audioRetryBtn) {
+    audioRetryBtn.onclick = function () {
+      hideErrorModal();
+      if (audioPlayer && currentStation) {
+        audioPlayer.load();
+        audioPlayer.play().catch(() => {
+          showErrorModal(
+            "Audio still failed to play. Try again or pick another station."
+          );
+        });
+      }
+    };
+  }
   audioPlayer = document.getElementById("audioPlayer");
   setupModal();
   setupResyncButton();
   setupVolumeControl();
-
+  // Spinner logic removed
   // Mute button logic
   const muteBtn = document.getElementById("muteBtn");
   if (muteBtn) {
@@ -118,13 +153,14 @@ function playStationBackground(station) {
     localStorage.setItem("lastTheme", station.game || "gtaiii");
   } catch {}
 
-  // Prepare audio
+  // Lazy-load: only set src when about to play
+  audioPlayer.preload = "none";
   audioPlayer.src = station.audioFile;
-  audioPlayer.preload = "auto";
+  audioPlayer.load();
+  // Spinner logic removed
   // Sync and play
   synchronizePlayback(station);
 
-  // Keep track info updating even if modal is closed
   if (syncInterval) clearInterval(syncInterval);
   syncInterval = setInterval(() => {
     updateCurrentTrack(station);
@@ -133,6 +169,15 @@ function playStationBackground(station) {
 
   // Show now playing toast
   showNowPlayingToast(station);
+}
+
+// Unset src after playback ends to free memory
+if (audioPlayer) {
+  audioPlayer.addEventListener("ended", () => {
+    audioPlayer.src = "";
+    audioPlayer.removeAttribute("src");
+    audioPlayer.load();
+  });
 }
 
 let toastTimer = null;
@@ -158,22 +203,10 @@ function showNowPlayingToast(station) {
   const logo = document.getElementById("toastLogo");
   const title = document.getElementById("toastTitle");
   const stationSpan = document.getElementById("toastStation");
-  let trackSpan = document.getElementById("toastTrack");
-  if (!trackSpan) {
-    trackSpan = document.createElement("span");
-    trackSpan.id = "toastTrack";
-    toast.querySelector(".toast-text").appendChild(trackSpan);
-  }
+  // Remove trackSpan logic
   logo.src = station.logo;
   title.textContent = "Now Playing";
-  stationSpan.textContent = ""; // No longer showing station name
-  // Compute current track quickly for initial toast info
-  const trackInfo = getCurrentTrackInfo(station);
-  if (trackInfo) {
-    trackSpan.textContent = `${trackInfo.artist} - ${trackInfo.title}`;
-  } else {
-    trackSpan.textContent = "";
-  }
+  stationSpan.textContent = station.name;
   toast.hidden = false;
   // Animate in
   toast.classList.add("show");
@@ -258,18 +291,12 @@ function renderTracklist(tracks) {
   tracks.forEach((track, index) => {
     const li = document.createElement("li");
     li.id = `track-${index}`;
-
     // Add special styling for commercials
     if (track.isCommercial) {
       li.classList.add("commercial-track");
     }
-
     li.textContent = `${track.artist} - ${track.title}`;
-
-    // Make track clickable to jump to it
-    li.style.cursor = "pointer";
-    li.onclick = () => jumpToTrack(index);
-
+    // Remove clickable logic
     tracklistContent.appendChild(li);
   });
 }
@@ -418,8 +445,5 @@ function updateCurrentTrack(station) {
     toastTrack.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
   }
 
-  // Highlight current track in list
-  document.querySelectorAll(".tracklist li").forEach((li, index) => {
-    li.classList.toggle("playing", index === currentTrackIndex);
-  });
+  // Tracklist is static: no highlight for current track
 }

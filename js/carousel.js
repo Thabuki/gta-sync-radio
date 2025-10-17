@@ -21,7 +21,7 @@ function playStaticThenStation(station) {
 
   if (!staticAudio) {
     staticAudio = new Audio();
-    staticAudio.preload = "auto";
+    staticAudio.preload = "none";
     // Make available for volume control
     window.staticAudio = staticAudio;
     try {
@@ -89,8 +89,10 @@ function playStaticThenStation(station) {
   tryNextSource();
 }
 // Carousel functionality (infinite with clones and seamless snap)
-let currentIndex = 0;
-let visualIndex = 0; // includes clones
+window.currentIndex =
+  typeof window.currentIndex === "number" ? window.currentIndex : 0;
+window.visualIndex =
+  typeof window.visualIndex === "number" ? window.visualIndex : 0; // includes clones
 let carouselElement = null;
 let isTransitioning = false;
 let playAfterTransitionTimer = null;
@@ -103,6 +105,10 @@ const reduceMotion =
 
 // Initialize carousel
 function initCarousel() {
+  // After using window.currentIndex/visualIndex, clear them to avoid interference
+  window.currentIndex = undefined;
+  window.visualIndex = undefined;
+  // Always set carouselElement before controls
   carouselElement = document.getElementById("radioCarousel");
   renderRadioStations();
   setupCarouselControls();
@@ -110,32 +116,40 @@ function initCarousel() {
   const numClones = 3;
 
   // Start at the first real station (offset by numClones because of leading clones)
-  visualIndex = numClones; // First real card (after leading clones)
-  currentIndex = 0; // Actual station index
-
-  // Persisted selection
-  const lastId = localStorage.getItem("lastStationId");
-  if (lastId) {
-    const idx = radioStations.findIndex((s) => s.id === lastId);
-    if (idx >= 0) {
-      currentIndex = idx;
-      visualIndex = idx + numClones; // +numClones for leading clones
-      // Apply theme based on persisted game
-      const body = document.body;
-      body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
-      const game = radioStations[idx].game;
-      if (game === "gtaiii") body.classList.add("theme-gtaiii");
-      else if (game === "gtavc") body.classList.add("theme-gtavc");
-      else if (game === "gtasa") body.classList.add("theme-gtasa");
-      updateCarousel(false);
-    } else {
-      currentIndex = 0;
-      updateCarousel(false);
-    }
+  // Prefer window.currentIndex/visualIndex (random start), then persisted selection, then default
+  let idx = null;
+  if (
+    typeof window.currentIndex === "number" &&
+    typeof window.visualIndex === "number"
+  ) {
+    window.currentIndex = window.currentIndex;
+    window.visualIndex = window.visualIndex;
+    idx = window.currentIndex;
   } else {
-    currentIndex = 0;
-    updateCarousel(false);
+    const lastId = localStorage.getItem("lastStationId");
+    if (lastId) {
+      idx = radioStations.findIndex((s) => s.id === lastId);
+      if (idx >= 0) {
+        window.currentIndex = idx;
+        window.visualIndex = idx + numClones;
+      } else {
+        window.currentIndex = 0;
+        window.visualIndex = numClones;
+      }
+    } else {
+      window.currentIndex = 0;
+      window.visualIndex = numClones;
+    }
   }
+  // Apply theme based on selected station
+  if (idx === null) idx = currentIndex;
+  const body = document.body;
+  body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
+  const game = radioStations[idx].game;
+  if (game === "gtaiii") body.classList.add("theme-gtaiii");
+  else if (game === "gtavc") body.classList.add("theme-gtavc");
+  else if (game === "gtasa") body.classList.add("theme-gtasa");
+  updateCarousel(false);
 }
 
 // Render radio station cards with clones for infinite loop
@@ -209,45 +223,27 @@ function focusStationByCard(cardEl, allowOpenModal = false) {
     isCentered: cardIndexInDom === visualIndex,
   });
 
-  // If the clicked card is already centered and selected, open modal
-  if (cardIndexInDom === visualIndex) {
-    // Get the actual station index (accounting for leading clones)
-    let stationIdx = cardIndexInDom - numClones;
-    // Wrap around for clones
-    if (stationIdx < 0) stationIdx = radioStations.length + stationIdx;
-    if (stationIdx >= radioStations.length)
-      stationIdx = stationIdx - radioStations.length;
-
-    // If this isn't the currently playing station, trigger static -> station handoff immediately
-    if (lastPlayedStationId !== radioStations[stationIdx].id) {
-      if (playAfterTransitionTimer) clearTimeout(playAfterTransitionTimer);
-      if (autoplayDebounceTimer) clearTimeout(autoplayDebounceTimer);
-      playStaticThenStation(radioStations[stationIdx]);
-      lastPlayedStationId = radioStations[stationIdx].id;
-    }
-
-    if (allowOpenModal && typeof openRadio === "function") {
-      openRadio(radioStations[stationIdx]);
-    }
-    return;
-  }
-
-  // Center the card, then open modal after transition
-  visualIndex = cardIndexInDom;
-
-  // Calculate actual station index
+  // Always center the card and open modal after transition
+  window.visualIndex = cardIndexInDom;
   let stationIdx = cardIndexInDom - numClones;
   if (stationIdx < 0) stationIdx = radioStations.length + stationIdx;
   if (stationIdx >= radioStations.length)
     stationIdx = stationIdx - radioStations.length;
-
-  currentIndex = stationIdx;
-
+  window.currentIndex = stationIdx;
   try {
-    localStorage.setItem("lastStationId", radioStations[currentIndex].id);
+    localStorage.setItem(
+      "lastStationId",
+      radioStations[window.currentIndex].id
+    );
   } catch {}
   isTransitioning = true;
   updateCarousel(true);
+  // After transition, open modal if requested
+  if (allowOpenModal && typeof openRadio === "function") {
+    setTimeout(() => {
+      openRadio(radioStations[stationIdx]);
+    }, 350); // match transition duration
+  }
 }
 
 // Setup carousel controls
@@ -290,17 +286,15 @@ function setupCarouselControls() {
     }
   });
 
-  // Delegated click handling to ensure card clicks are captured reliably
+  // Delegated click handling: always trigger focusStationByCard for any card click
   listEl.addEventListener("click", (e) => {
-    console.log("Click event on carousel:", e.target);
-    if (isTransitioning) {
-      console.log("Click ignored: transitioning");
-      return;
+    if (isTransitioning) return;
+    let card = e.target;
+    // If clicking logo or child, walk up to .radio-card
+    while (card && !card.classList.contains("radio-card")) {
+      card = card.parentElement;
     }
-    const card = e.target.closest(".radio-card");
-    console.log("Clicked card:", card);
-    if (!card) return;
-    // Only open modal if the clicked card is already centered
+    if (!card || !card.classList.contains("radio-card")) return;
     focusStationByCard(card, true);
   });
 
@@ -309,6 +303,7 @@ function setupCarouselControls() {
   let touchStartY = 0;
   let touchActive = false;
   const threshold = 30; // pixels
+  const swipeIndicator = document.getElementById("swipeIndicator");
 
   listEl.addEventListener(
     "touchstart",
@@ -317,6 +312,10 @@ function setupCarouselControls() {
       touchActive = true;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      if (swipeIndicator) {
+        swipeIndicator.classList.add("active");
+        setTimeout(() => swipeIndicator.classList.remove("active"), 700);
+      }
     },
     { passive: true }
   );
@@ -347,38 +346,42 @@ function setupCarouselControls() {
     } else {
       moveToPrevious();
     }
+    if (swipeIndicator) {
+      swipeIndicator.classList.add("active");
+      setTimeout(() => swipeIndicator.classList.remove("active"), 700);
+    }
   });
 }
 
 // Move to next station
 function moveToNext() {
-  visualIndex++;
-  // Update currentIndex immediately based on visualIndex
+  window.visualIndex++;
   const numStations = radioStations.length;
   const numClones = 3;
-  if (visualIndex >= numClones && visualIndex < numStations + numClones) {
-    currentIndex = visualIndex - numClones;
+  if (
+    window.visualIndex >= numClones &&
+    window.visualIndex < numStations + numClones
+  ) {
+    window.currentIndex = window.visualIndex - numClones;
   }
   isTransitioning = true;
   updateCarousel(true);
-
-  // After transition, check if we're on the clone at the end
   checkAndResetPosition();
 }
 
 // Move to previous station
 function moveToPrevious() {
-  visualIndex--;
-  // Update currentIndex immediately based on visualIndex
+  window.visualIndex--;
   const numStations = radioStations.length;
   const numClones = 3;
-  if (visualIndex >= numClones && visualIndex < numStations + numClones) {
-    currentIndex = visualIndex - numClones;
+  if (
+    window.visualIndex >= numClones &&
+    window.visualIndex < numStations + numClones
+  ) {
+    window.currentIndex = window.visualIndex - numClones;
   }
   isTransitioning = true;
   updateCarousel(true);
-
-  // After transition, check if we're on the clone at the beginning
   checkAndResetPosition();
 }
 
@@ -462,8 +465,8 @@ function updateCarousel(withTransition = true) {
   // Calculate the center position using the wrapper (not the transformed track)
   const wrapper = document.querySelector(".carousel-wrapper");
   let centerOffset = 0;
-  if (cards[visualIndex]) {
-    const targetCard = cards[visualIndex];
+  if (cards[window.visualIndex]) {
+    const targetCard = cards[window.visualIndex];
     const wrapperWidth =
       (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
     const targetWidth = targetCard.offsetWidth || cardWidth;
@@ -474,7 +477,7 @@ function updateCarousel(withTransition = true) {
     centerOffset = wrapperWidth / 2 - cardWidth / 2;
   }
   // Subtract the cumulative offset including initial left padding
-  const translateX = centerOffset - (visualIndex * offset + paddingLeft);
+  const translateX = centerOffset - (window.visualIndex * offset + paddingLeft);
 
   // Enable or disable transition
   if (withTransition) {
@@ -491,7 +494,7 @@ function updateCarousel(withTransition = true) {
     autoplayDebounceTimer = null;
   }
   // Schedule playback when transition completes (or debounced if no transition)
-  const currentStationData = radioStations[currentIndex];
+  const currentStationData = radioStations[window.currentIndex];
   if (withTransition) {
     if (playAfterTransitionTimer) clearTimeout(playAfterTransitionTimer);
     playAfterTransitionTimer = setTimeout(() => {
@@ -524,12 +527,14 @@ function updateCarousel(withTransition = true) {
 
   // Update active state based only on station index.
   // This keeps both the clone and the real card active during the snap, avoiding visual flicker.
+  const audioEl = document.getElementById("audioPlayer");
+  const isPlaying = audioEl && !audioEl.paused && !!audioEl.src;
   cards.forEach((card) => {
     const dataIndex = parseInt(card.dataset.index);
     const actualIndex =
       ((dataIndex % radioStations.length) + radioStations.length) %
       radioStations.length;
-    card.classList.toggle("active", actualIndex === currentIndex);
+    card.classList.toggle("active", actualIndex === window.currentIndex);
   });
 
   // Update station info
