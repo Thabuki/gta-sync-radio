@@ -1,0 +1,266 @@
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 700px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 20px;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eee;
+}
+
+.modal-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain; /* fit full logo */
+  object-position: center;
+  border-radius: 12px;
+  padding: 8px;
+  background: #ffffff;
+}
+
+.player-info h2 {
+  font-size: 1.8rem;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+
+.player-info .dj-name {
+  font-size: 1.1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.audio-player {
+  margin-bottom: 30px;
+}
+
+#audioPlayer {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+/* Completely hide and remove space for browser audio controls we don't want */
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-volume-control-container,
+audio::-webkit-media-controls-overflow-button,
+audio::-webkit-media-controls-download-button,
+audio::-webkit-media-controls-playback-speed-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+audio::-moz-media-controls-volume-control {
+  display: none !important;
+}
+
+/* Ensure panel doesn't reserve space */
+audio::-webkit-media-controls-panel {
+  padding-right: 0 !important;
+}
+
+audio::-internal-media-controls-download-button {
+  display: none;
+}
+
+audio::-webkit-media-controls-enclosure {
+  overflow: hidden;
+}
+
+audio::-webkit-media-controls-panel {
+  width: calc(100% + 30px);
+}
+
+.sync-info {
+  background: var(--surface);
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.sync-info p {
+  margin: 5px 0;
+  color: var(--accent);
+}
+
+.current-track {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.resync-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.resync-btn:hover {
+  background: var(--accent-2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.resync-btn:active {
+  transform: translateY(0);
+}
+
+.resync-btn:disabled,
+.resync-btn.synced {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.resync-btn:disabled:hover,
+.resync-btn.synced:hover {
+  background: #ccc;
+  transform: none;
+  box-shadow: none;
+}
+
+.tracklist {
+  margin-top: 25px;
+}
+
+.tracklist h3 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.tracklist ul {
+  list-style: none;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.tracklist li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.tracklist li:hover {
+  background: #f9f9f9;
+  padding-left: 15px;
+}
+
+.tracklist li.playing {
+  background: #f0f4ff;
+  border-left: 4px solid #667eea;
+  font-weight: bold;
+}
+
+.tracklist li.playing:hover {
+  background: #e6f0ff;
+}
+
+.tracklist li.commercial-track {
+  background: #fff9e6;
+  color: #ff9800;
+  font-style: italic;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.tracklist li.commercial-track:hover {
+  background: #fff3d6;
+  opacity: 1;
+}
+
+.tracklist li.commercial-track.playing {
+  background: #ffe0b2;
+  border-left: 4px solid #ff9800;
+  opacity: 1;
+}
+
+/* Scrollbar Styling */
+.tracklist ul::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tracklist ul::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tracklist ul::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 10px;
+}
+
+.tracklist ul::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
+}

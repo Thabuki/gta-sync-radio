@@ -1,0 +1,203 @@
+.theme-gtasa {
+  --theme-bg: #1a2d1a;
+  --theme-accent: #e6c200;
+  --theme-text: #e6e6e6;
+  --theme-card: #2e4d2e;
+  --theme-divider: #3a523a;
+}
+/* Base styles and resets */
+:root {
+  /* Theme variables (defaults = GTA 3 for now) */
+  --bg-start: #9cbac2;
+  --bg-end: #4792a9;
+  --accent: #4a90e2;
+  --accent-2: #4a90e2;
+  --surface: #f0f4ff;
+  --text-on-accent: #ffffff;
+  --text-primary: #333333;
+}
+
+/* Future themes can override these vars by applying a class on <body> */
+.theme-gtaiii {
+  --bg-start: #9cbac2;
+  --bg-end: #4792a9;
+  --accent: #4a90e2;
+  --accent-2: #4a90e2;
+  --surface: #f0f4ff;
+}
+
+/* Vice City theme (neon pink/teal vibes) */
+.theme-gtavc {
+  --bg-start: #0bbcd6; /* teal */
+  --bg-end: #ff5fa2; /* neon pink */
+  --accent: #ea7f99;
+  --accent-2: #ea7f99;
+  --surface: #f3eef9; /* soft lilac surface */
+}
+
+/* San Andreas theme placeholder (to be tuned) */
+.theme-gtasa {
+  --bg-start: #b3cea5;
+  --bg-end: #f5b170;
+  --accent: #7a9b5f;
+  --accent-2: #7a9b5f;
+  --surface: #e9f1f4; /* cool grey */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--text-primary);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+  color: white;
+}
+
+.game-logo-container {
+  margin-bottom: 20px;
+}
+
+.game-logo {
+  height: 120px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: opacity 0.3s ease;
+}
+
+/* Scale logo up on larger screens */
+@media (min-width: 768px) {
+  .game-logo {
+    height: 140px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .game-logo {
+    height: 160px;
+  }
+}
+
+header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Smaller subtitle on mobile */
+@media (max-width: 480px) {
+  .subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+.station-info {
+  text-align: center;
+  color: white;
+  margin: 20px 0;
+  min-height: 80px;
+}
+
+.station-info .genre-name {
+  margin-top: 4px;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #ffe;
+}
+
+.mute-btn {
+  margin-top: 10px;
+  padding: 6px 18px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent, #667eea);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.mute-btn:hover {
+  background: var(--accent-2, #764ba2);
+}
+
+.station-info h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.station-info p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.volume-control {
+  margin-top: 70px;
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.volume-control input[type="range"] {
+  width: 220px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* Now Playing Toast */
+.now-playing-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 1000;
+}
+
+.now-playing-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.now-playing-toast img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.now-playing-toast .toast-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}

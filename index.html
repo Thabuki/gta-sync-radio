@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="gta-sync-radio/" />
     <title>GTA 3D Era Radio Player</title>
     <link rel="stylesheet" href="css/base.css" />
     <link rel="stylesheet" href="css/carousel.css" />
@@ -13,10 +12,11 @@
   <body>
     <div class="container">
       <header>
-        <h1>GTA 3D Era Radio Stations</h1>
-        <p class="subtitle">
-          Synchronized radio experience - Listen together in real-time
-        </p>
+        <div class="game-logo-container">
+          <img id="gameLogo" src="" alt="Game Logo" class="game-logo" />
+        </div>
+        <h1>Radio Stations</h1>
+        <p class="subtitle">Listen together in sync.</p>
       </header>
 
       <div class="carousel-container">
@@ -48,19 +48,24 @@
           <div class="player-info">
             <h2 id="modalStationName"></h2>
             <p id="modalDJ" class="dj-name"></p>
+            <p id="modalGenre" class="genre-name"></p>
           </div>
         </div>
 
         <div class="audio-player">
-          <audio id="audioPlayer" controls>
+          <audio
+            id="audioPlayer"
+            controls
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            disablepictureinpicture
+            oncontextmenu="return false;"
+          >
             Your browser does not support the audio element.
           </audio>
           <div class="sync-info">
             <p>🔄 Synchronized playback active</p>
             <p id="currentTrack" class="current-track"></p>
-            <button id="resyncBtn" class="resync-btn">
-              🕐 Re-sync to Clock
-            </button>
+            <button id="resyncBtn" class="resync-btn">🕐 Re-sync</button>
           </div>
         </div>
 
