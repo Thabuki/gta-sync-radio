@@ -1,0 +1,105 @@
+/* Carousel Styles */
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  margin: 20px 0;
+}
+
+.carousel-wrapper {
+  overflow: hidden;
+  width: 100%;
+  max-width: 900px;
+  padding: 20px 0;
+}
+
+.radio-carousel {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+  gap: 20px;
+  padding: 0 20px;
+}
+
+.radio-card {
+  flex: 0 0 200px;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  opacity: 0.5;
+  transform: scale(0.85);
+}
+
+.radio-card.active {
+  opacity: 1;
+  transform: scale(1.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 3px solid #fff;
+}
+
+.radio-card:hover:not(.active) {
+  opacity: 0.8;
+  transform: scale(0.9);
+}
+
+.radio-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.radio-card h2 {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+  color: #667eea;
+}
+
+.radio-card .dj-name {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+  display: none; /* Hide on cards, show in station info */
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  color: #667eea;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-arrow:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.carousel-arrow-left {
+  left: 20px;
+}
+
+.carousel-arrow-right {
+  right: 20px;
+}
