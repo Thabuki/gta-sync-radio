@@ -81,6 +81,13 @@ header {
   transition: opacity 0.3s ease;
 }
 
+/* Very small screens: scale logo down a bit more */
+@media (max-width: 360px) {
+  .game-logo {
+    height: 96px;
+  }
+}
+
 /* Scale logo up on larger screens */
 @media (min-width: 768px) {
   .game-logo {

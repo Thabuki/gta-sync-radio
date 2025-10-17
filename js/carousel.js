@@ -186,13 +186,16 @@ function createStationCard(station, index) {
 }
 
 // Center the clicked card (clone or real) and select it
-function focusStationByCard(cardEl, openModal = false) {
+function focusStationByCard(cardEl, allowOpenModal = false) {
   // Always allow click to center and play, even if transitioning
   const cards = Array.from(document.querySelectorAll(".radio-card"));
   const cardIndexInDom = cards.indexOf(cardEl);
   if (cardIndexInDom === -1) return;
 
   const numClones = 3;
+
+  // Ensure no stale "open after center" flags remain
+  window._openModalAfterCenter = false;
 
   console.log("focusStationByCard called:", {
     cardIndexInDom,
@@ -217,7 +220,7 @@ function focusStationByCard(cardEl, openModal = false) {
       playStaticThenStation(radioStations[stationIdx]);
     }
 
-    if (typeof openRadio === "function") {
+    if (allowOpenModal && typeof openRadio === "function") {
       openRadio(radioStations[stationIdx]);
     }
     return;
@@ -238,7 +241,6 @@ function focusStationByCard(cardEl, openModal = false) {
     localStorage.setItem("lastStationId", radioStations[currentIndex].id);
   } catch {}
   isTransitioning = true;
-  window._openModalAfterCenter = true;
   updateCarousel(true);
 }
 
@@ -292,6 +294,7 @@ function setupCarouselControls() {
     const card = e.target.closest(".radio-card");
     console.log("Clicked card:", card);
     if (!card) return;
+    // Only open modal if the clicked card is already centered
     focusStationByCard(card, true);
   });
 
@@ -470,13 +473,6 @@ function updateCarousel(withTransition = true) {
         playStaticThenStation(currentStationData);
         lastPlayedStationId = currentStationData.id;
       }
-      // Open modal if requested
-      if (window._openModalAfterCenter) {
-        window._openModalAfterCenter = false;
-        if (typeof openRadio === "function") {
-          openRadio(currentStationData);
-        }
-      }
     }, 320);
   } else {
     isTransitioning = false;
@@ -486,13 +482,6 @@ function updateCarousel(withTransition = true) {
     if (!alreadyThisStation && !isPlaying) {
       playStaticThenStation(currentStationData);
       lastPlayedStationId = currentStationData.id;
-    }
-    // Open modal if requested
-    if (window._openModalAfterCenter) {
-      window._openModalAfterCenter = false;
-      if (typeof openRadio === "function") {
-        openRadio(currentStationData);
-      }
     }
   }
 
