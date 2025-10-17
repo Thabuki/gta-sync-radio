@@ -31,7 +31,8 @@ function playStaticThenStation(station) {
     } catch {}
   }
   // Randomly select a candidate group each time
-  const group = staticCandidates[Math.floor(Math.random() * staticCandidates.length)];
+  const group =
+    staticCandidates[Math.floor(Math.random() * staticCandidates.length)];
   let attemptIndex = 0;
   // Stop any previous static sound
   try {
@@ -56,7 +57,9 @@ function playStaticThenStation(station) {
     }
     const choice = group[attemptIndex++];
     staticAudio.src = choice;
-    try { staticAudio.load(); } catch {}
+    try {
+      staticAudio.load();
+    } catch {}
     staticAudio.play().catch(() => {
       // Try next fallback on play error
       tryNextSource();
@@ -350,6 +353,12 @@ function setupCarouselControls() {
 // Move to next station
 function moveToNext() {
   visualIndex++;
+  // Update currentIndex immediately based on visualIndex
+  const numStations = radioStations.length;
+  const numClones = 3;
+  if (visualIndex >= numClones && visualIndex < numStations + numClones) {
+    currentIndex = visualIndex - numClones;
+  }
   isTransitioning = true;
   updateCarousel(true);
 
@@ -360,6 +369,12 @@ function moveToNext() {
 // Move to previous station
 function moveToPrevious() {
   visualIndex--;
+  // Update currentIndex immediately based on visualIndex
+  const numStations = radioStations.length;
+  const numClones = 3;
+  if (visualIndex >= numClones && visualIndex < numStations + numClones) {
+    currentIndex = visualIndex - numClones;
+  }
   isTransitioning = true;
   updateCarousel(true);
 
@@ -449,11 +464,13 @@ function updateCarousel(withTransition = true) {
   let centerOffset = 0;
   if (cards[visualIndex]) {
     const targetCard = cards[visualIndex];
-    const wrapperWidth = (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
+    const wrapperWidth =
+      (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
     const targetWidth = targetCard.offsetWidth || cardWidth;
     centerOffset = wrapperWidth / 2 - targetWidth / 2;
   } else {
-    const wrapperWidth = (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
+    const wrapperWidth =
+      (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
     centerOffset = wrapperWidth / 2 - cardWidth / 2;
   }
   // Subtract the cumulative offset including initial left padding

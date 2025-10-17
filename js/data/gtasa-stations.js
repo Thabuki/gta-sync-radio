@@ -37,7 +37,11 @@ const gtasaStations = [
     tracks: [
       { artist: "Kiss", title: "Strutter", duration: 192 },
       { artist: "Joe Cocker", title: "Woman to Woman", duration: 354 },
-      { artist: "Eddie Money", title: "Two Tickets to Paradise", duration: 201 },
+      {
+        artist: "Eddie Money",
+        title: "Two Tickets to Paradise",
+        duration: 201,
+      },
       { artist: "Lynyrd Skynyrd", title: "Free Bird", duration: 549 },
       { artist: "Foghat", title: "Slow Ride", duration: 233 },
       { artist: "Boston", title: "Smokin'", duration: 260 },
@@ -57,14 +61,26 @@ const gtasaStations = [
     audioFile: "media/gtasa/k-rose.mp3",
     tracks: [
       { artist: "Juice Newton", title: "Queen of Hearts", duration: 202 },
-      { artist: "Louise Mandrell", title: "Sleeping Single in a Double Bed", duration: 174 },
+      {
+        artist: "Louise Mandrell",
+        title: "Sleeping Single in a Double Bed",
+        duration: 174,
+      },
       { artist: "Eddie Rabbitt", title: "I Love a Rainy Night", duration: 178 },
       { artist: "Willie Nelson", title: "Crazy", duration: 156 },
       { artist: "Jerry Reed", title: "Amos Moses", duration: 178 },
       { artist: "Johnny Cash", title: "Hey Porter", duration: 127 },
       { artist: "Merle Haggard", title: "Always Wanting You", duration: 187 },
-      { artist: "Patsy Cline", title: "Three Cigarettes in an Ashtray", duration: 152 },
-      { artist: "Whitey Shafer", title: "All My Ex's Live in Texas", duration: 176 },
+      {
+        artist: "Patsy Cline",
+        title: "Three Cigarettes in an Ashtray",
+        duration: 152,
+      },
+      {
+        artist: "Whitey Shafer",
+        title: "All My Ex's Live in Texas",
+        duration: 176,
+      },
       { artist: "Hank Williams", title: "Hey Good Lookin'", duration: 142 },
     ],
   },

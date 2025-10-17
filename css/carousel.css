@@ -107,12 +107,12 @@
   }
 
   .radio-carousel {
-    gap: 14px;           /* smaller gap so neighbors peek nicely */
-    padding: 0 12px;     /* symmetric side padding for equal peeks */
+    gap: 14px; /* smaller gap so neighbors peek nicely */
+    padding: 0 12px; /* symmetric side padding for equal peeks */
   }
 
   .radio-card {
-    flex: 0 0 80vw;      /* ensure only one full card fits */
+    flex: 0 0 80vw; /* ensure only one full card fits */
   }
 
   /* Make non-active cards dimmer to avoid ambiguity */
