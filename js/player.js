@@ -333,7 +333,7 @@ function checkSyncStatus(station) {
 
   const now = new Date();
   const secondsSinceMidnight =
-    now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
 
   const expectedPosition = secondsSinceMidnight % totalDuration;
   const currentPosition = audioPlayer.currentTime % totalDuration;
@@ -378,7 +378,7 @@ function updateResyncButtonState() {
   }
 }
 
-// Synchronize playback based on computer clock
+// Synchronize playback based on UTC time (global sync across all timezones)
 function synchronizePlayback(station) {
   // Calculate total duration of all tracks
   const totalDuration = station.tracks.reduce(
@@ -386,10 +386,10 @@ function synchronizePlayback(station) {
     0
   );
 
-  // Get current time in seconds since midnight
+  // Get current time in seconds since midnight UTC
   const now = new Date();
   const secondsSinceMidnight =
-    now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
 
   // Calculate position in the loop (modulo total duration)
   const positionInLoop = secondsSinceMidnight % totalDuration;
@@ -413,37 +413,8 @@ function synchronizePlayback(station) {
   updateCurrentTrack(station);
 }
 
-// Update current track display
+// Update current track display (simplified - no longer updates DOM as those elements are removed)
 function updateCurrentTrack(station) {
-  if (!audioPlayer || !currentStation) return;
-
-  const currentTime = audioPlayer.currentTime;
-  let accumulatedTime = 0;
-  let currentTrackIndex = 0;
-
-  // Find which track is currently playing
-  for (let i = 0; i < station.tracks.length; i++) {
-    if (currentTime < accumulatedTime + station.tracks[i].duration) {
-      currentTrackIndex = i;
-      break;
-    }
-    accumulatedTime += station.tracks[i].duration;
-  }
-
-  const currentTrack = station.tracks[currentTrackIndex];
-  const trackTime = Math.floor(currentTime - accumulatedTime);
-  const trackRemaining = currentTrack.duration - trackTime;
-
-  // Update display
-  document.getElementById(
-    "currentTrack"
-  ).textContent = `Now Playing: ${currentTrack.artist} - ${currentTrack.title}`;
-
-  // Also reflect on the toast if present
-  const toastTrack = document.getElementById("toastTrack");
-  if (toastTrack) {
-    toastTrack.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
-  }
-
-  // Tracklist is static: no highlight for current track
+  // This function can be kept for future use or removed entirely if not needed
+  // Currently does nothing as the currentTrack display and track info are removed
 }

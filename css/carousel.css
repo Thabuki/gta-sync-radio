@@ -153,24 +153,7 @@
     opacity: 0.6;
   }
 
-  /* Add a subtle NOW PLAYING badge on the active card */
-  .radio-card.active::after {
-    content: "";
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 16px;
-    border-radius: 999px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
-    /* Equalizer icon */
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12' fill='%23fff'><rect x='2' y='2' width='4' height='8' rx='1'/><rect x='12' y='1' width='4' height='10' rx='1'/><rect x='22' y='3' width='4' height='6' rx='1'/><rect x='32' y='2' width='4' height='8' rx='1'/></svg>");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 22px 10px;
-  }
+  /* Now Playing badge removed */
 }
 
 .radio-card h2 {

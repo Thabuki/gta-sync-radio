@@ -137,6 +137,7 @@ audio::-webkit-media-controls-panel {
   padding: 15px;
   border-radius: 10px;
   text-align: center;
+  margin-bottom: 25px;
 }
 
 .sync-info p {
@@ -150,7 +151,7 @@ audio::-webkit-media-controls-panel {
 }
 
 .resync-btn {
-  margin-top: 12px;
+  margin-top: 0;
   padding: 10px 20px;
   background: var(--accent);
   color: var(--text-on-accent);
@@ -244,7 +245,6 @@ audio::-webkit-media-controls-panel {
 .tracklist ul::-webkit-scrollbar {
   width: 8px;
 }
-
 
 .tracklist ul::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
