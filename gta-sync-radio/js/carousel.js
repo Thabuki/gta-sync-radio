@@ -1,8 +1,70 @@
+// Static sound effect element (placeholder)
+let staticAudio = null;
+
+function playStaticThenStation(station) {
+  const staticFiles = [
+    "media/radio-static-1.wav",
+    "media/radio-static-2.wav",
+    "media/radio-static-3.ogg",
+  ];
+
+  // Stop currently playing station audio immediately
+  const audioPlayer = document.getElementById("audioPlayer");
+  if (audioPlayer) {
+    try {
+      audioPlayer.pause();
+    } catch {}
+  }
+
+  if (!staticAudio) {
+    staticAudio = new Audio();
+    staticAudio.preload = "auto";
+  }
+  // Randomly select a static sound each time
+  const choice = staticFiles[Math.floor(Math.random() * staticFiles.length)];
+  // Stop any previous static sound
+  try {
+    staticAudio.pause();
+  } catch {}
+  staticAudio.currentTime = 0;
+  staticAudio.volume = 0.5;
+  if (!staticAudio.src || !staticAudio.src.endsWith(choice)) {
+    staticAudio.src = choice;
+    try {
+      staticAudio.load();
+    } catch {}
+  }
+  staticAudio.onended = () => {
+    if (typeof playStationBackground === "function") {
+      playStationBackground(station);
+    } else {
+      // Fallback: still avoid opening modal automatically
+      const audioEl = document.getElementById("audioPlayer");
+      if (audioEl) {
+        audioEl.src = station.audioFile;
+        audioEl.preload = "auto";
+        try {
+          audioEl.play();
+        } catch {}
+      }
+    }
+  };
+  staticAudio.play().catch(() => {
+    if (typeof playStationBackground === "function") {
+      playStationBackground(station);
+    }
+  });
+}
 // Carousel functionality (infinite with clones and seamless snap)
 let currentIndex = 0;
 let visualIndex = 0; // includes clones
 let carouselElement = null;
 let isTransitioning = false;
+let playAfterTransitionTimer = null;
+let lastPlayedStationId = null;
+const reduceMotion =
+  window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Initialize carousel
 function initCarousel() {
@@ -10,30 +72,54 @@ function initCarousel() {
   renderRadioStations();
   setupCarouselControls();
 
-  // Start at the first real station (after clones)
-  visualIndex = 3; // number of clones before
-  currentIndex = 0;
-  updateCarousel(false);
+  // Start at the first station (no clones mode)
+  visualIndex = 0;
+  // Persisted selection
+  const lastId = localStorage.getItem("lastStationId");
+  if (lastId) {
+    const idx = radioStations.findIndex((s) => s.id === lastId);
+    if (idx >= 0) {
+      currentIndex = idx;
+      visualIndex = idx;
+      // Apply theme based on persisted game
+      const body = document.body;
+      body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
+      const game = radioStations[idx].game;
+      if (game === "gtaiii") body.classList.add("theme-gtaiii");
+      else if (game === "gtavc") body.classList.add("theme-gtavc");
+      else if (game === "gtasa") body.classList.add("theme-gtasa");
+      updateCarousel(false);
+    } else {
+      currentIndex = 0;
+      updateCarousel(false);
+    }
+  } else {
+    currentIndex = 0;
+    updateCarousel(false);
+  }
 }
 
 // Render radio station cards
 function renderRadioStations() {
   const carousel = document.getElementById("radioCarousel");
+  carousel.innerHTML = "";
 
-  const clonesBefore = radioStations.slice(-3).map((station, index) => {
-    return createStationCard(station, -(3 - index));
-  });
+  // Group stations by game
+  const games = [
+    { key: "gta3", label: "GTA III" },
+    { key: "gtavc", label: "Vice City" },
+    { key: "gtasa", label: "San Andreas" },
+  ];
+  let groupedStations = games.map((g) => ({
+    key: g.key,
+    label: g.label,
+    stations: radioStations.filter((s) => s.game === g.key),
+  }));
 
-  const originals = radioStations.map((station, index) => {
-    return createStationCard(station, index);
-  });
-
-  const clonesAfter = radioStations.slice(0, 3).map((station, index) => {
-    return createStationCard(station, radioStations.length + index);
-  });
-
-  [...clonesBefore, ...originals, ...clonesAfter].forEach((card) => {
-    carousel.appendChild(card);
+  // Render each group with label and divider
+  // Flatten all stations into a single row, no labels/dividers
+  radioStations.forEach((station, idx) => {
+    carousel.appendChild(createStationCard(station, idx));
   });
 }
 
@@ -51,7 +137,8 @@ function createStationCard(station, index) {
     /placeholder\.(svg|png)$/i.test(station.logo);
 
   card.innerHTML = `
-    <img src="${station.logo}" alt="${station.name}" class="radio-logo" data-placeholder="${isPlaceholder}" onerror="this.dataset.placeholder='true'; this.src='img/placeholder.svg'">
+    <img src="${station.logo}" alt="${station.name}" class="radio-logo" loading="lazy" decoding="async" fetchpriority="low"
+      onerror="this.onerror=null;this.src='img/placeholder.svg'">
     <h2>${station.name}</h2>
     <p class="dj-name">DJ: ${station.dj}</p>
   `;
@@ -61,29 +148,24 @@ function createStationCard(station, index) {
 
 // Center the clicked card (clone or real) and select it
 function focusStationByCard(cardEl) {
-  if (isTransitioning) return;
+  // Always allow click to center and play, even if transitioning
   const cards = Array.from(document.querySelectorAll(".radio-card"));
   const cardIndexInDom = cards.indexOf(cardEl);
   if (cardIndexInDom === -1) return;
 
-  const dataIndex = parseInt(cardEl.dataset.index);
-  const actualIndex =
-    ((dataIndex % radioStations.length) + radioStations.length) %
-    radioStations.length;
-
   // If the clicked card is already centered and selected, open immediately
-  if (cardIndexInDom === visualIndex && actualIndex === currentIndex) {
+  if (cardIndexInDom === visualIndex && cardIndexInDom === currentIndex) {
     openRadio(radioStations[currentIndex]);
     return;
   }
 
-  currentIndex = actualIndex;
-  visualIndex = cardIndexInDom; // center the exact clicked element
+  currentIndex = cardIndexInDom;
+  visualIndex = cardIndexInDom;
+  try {
+    localStorage.setItem("lastStationId", radioStations[currentIndex].id);
+  } catch {}
   isTransitioning = true;
   updateCarousel(true);
-  checkAndResetPosition(() => {
-    openRadio(radioStations[currentIndex]);
-  });
 }
 
 // Setup carousel controls
@@ -94,12 +176,10 @@ function setupCarouselControls() {
   const listEl = carouselElement;
 
   prevBtn.addEventListener("click", () => {
-    if (isTransitioning) return;
     moveToPrevious();
   });
 
   nextBtn.addEventListener("click", () => {
-    if (isTransitioning) return;
     moveToNext();
   });
 
@@ -135,65 +215,84 @@ function setupCarouselControls() {
     if (!card) return;
     focusStationByCard(card);
   });
+
+  // Touch swipe navigation
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchActive = false;
+  const threshold = 30; // pixels
+
+  listEl.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+      touchActive = true;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+
+  listEl.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!touchActive) return;
+      // Allow vertical scrolling; only act on mostly horizontal moves
+      const dx = e.touches[0].clientX - touchStartX;
+      const dy = e.touches[0].clientY - touchStartY;
+      if (Math.abs(dx) < Math.abs(dy)) return; // vertical gesture
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+
+  listEl.addEventListener("touchend", (e) => {
+    if (!touchActive) return;
+    touchActive = false;
+    const dx =
+      ((e.changedTouches && e.changedTouches[0].clientX) || touchStartX) -
+      touchStartX;
+    if (Math.abs(dx) < threshold) return;
+    if (isTransitioning) return;
+    if (dx < 0) {
+      moveToNext();
+    } else {
+      moveToPrevious();
+    }
+  });
 }
 
 // Move to next station
 function moveToNext() {
-  visualIndex += 1;
   currentIndex = (currentIndex + 1) % radioStations.length;
+  visualIndex = currentIndex;
+  try {
+    localStorage.setItem("lastStationId", radioStations[currentIndex].id);
+  } catch {}
   isTransitioning = true;
   updateCarousel(true);
-  checkAndResetPosition();
 }
 
 // Move to previous station
 function moveToPrevious() {
-  visualIndex -= 1;
   currentIndex =
     (currentIndex - 1 + radioStations.length) % radioStations.length;
+  visualIndex = currentIndex;
+  try {
+    localStorage.setItem("lastStationId", radioStations[currentIndex].id);
+  } catch {}
   isTransitioning = true;
   updateCarousel(true);
-  checkAndResetPosition();
 }
 
 // Check if we need to reset position after reaching clones
 // After transition, snap seamlessly if on a clone
 function checkAndResetPosition(onAfterTransition) {
-  const total = radioStations.length;
-  const cloneOffset = 3;
-
-  const onTransitionEnd = (e) => {
-    if (e.propertyName !== "transform") return;
-    carouselElement.removeEventListener("transitionend", onTransitionEnd);
-
-    if (visualIndex >= total + cloneOffset) {
-      visualIndex = cloneOffset;
-      updateCarousel(false);
-    } else if (visualIndex < cloneOffset) {
-      visualIndex = total + cloneOffset - 1;
-      updateCarousel(false);
-    }
-    isTransitioning = false;
-    if (typeof onAfterTransition === "function") onAfterTransition();
-  };
-
-  carouselElement.addEventListener("transitionend", onTransitionEnd);
-
-  // Fallback watchdog: clear transition state if transitionend doesn't fire
+  // No clone logic needed; just clear transition state after animation
   setTimeout(() => {
-    if (!isTransitioning) return;
-    carouselElement.removeEventListener("transitionend", onTransitionEnd);
-    // Snap if needed
-    if (visualIndex >= total + cloneOffset) {
-      visualIndex = cloneOffset;
-      updateCarousel(false);
-    } else if (visualIndex < cloneOffset) {
-      visualIndex = total + cloneOffset - 1;
-      updateCarousel(false);
-    }
     isTransitioning = false;
     if (typeof onAfterTransition === "function") onAfterTransition();
-  }, 500);
+  }, 350);
 }
 
 // Start automatic rotation
@@ -204,10 +303,12 @@ function selectStation(index) {
   currentIndex =
     ((index % radioStations.length) + radioStations.length) %
     radioStations.length;
-  visualIndex = currentIndex + 3; // align with clone offset
+  visualIndex = currentIndex; // no clones
   updateCarousel(true);
   setTimeout(() => {
-    openRadio(radioStations[currentIndex]);
+    if (typeof playStationBackground === "function") {
+      playStationBackground(radioStations[currentIndex]);
+    }
   }, 300);
 }
 
@@ -232,8 +333,15 @@ function updateCarousel(withTransition = true) {
   }
   const offset = cardWidth + gap;
 
-  // Calculate the center position using visualIndex (includes clones)
-  const centerOffset = carouselElement.offsetWidth / 2 - cardWidth / 2;
+  // Calculate the center position using the actual centered card
+  let centerOffset = 0;
+  if (cards[visualIndex]) {
+    const rect = cards[visualIndex].getBoundingClientRect();
+    const carouselRect = carouselElement.getBoundingClientRect();
+    centerOffset = carouselRect.width / 2 - rect.width / 2;
+  } else {
+    centerOffset = carouselElement.offsetWidth / 2 - cardWidth / 2;
+  }
   const translateX = centerOffset - visualIndex * offset;
 
   // Enable or disable transition
@@ -245,9 +353,26 @@ function updateCarousel(withTransition = true) {
 
   carouselElement.style.transform = `translateX(${translateX}px)`;
 
-  // When not transitioning (snap), clear flag; transition flag cleared in checkAndResetPosition
-  if (!withTransition) {
+  // Schedule playback when transition completes (or immediately if no transition)
+  const currentStationData = radioStations[currentIndex];
+  if (withTransition) {
+    if (playAfterTransitionTimer) clearTimeout(playAfterTransitionTimer);
+    playAfterTransitionTimer = setTimeout(() => {
+      isTransitioning = false;
+      if (
+        !lastPlayedStationId ||
+        lastPlayedStationId !== currentStationData.id
+      ) {
+        playStaticThenStation(currentStationData);
+        lastPlayedStationId = currentStationData.id;
+      }
+    }, 320);
+  } else {
     isTransitioning = false;
+    if (!lastPlayedStationId || lastPlayedStationId !== currentStationData.id) {
+      playStaticThenStation(currentStationData);
+      lastPlayedStationId = currentStationData.id;
+    }
   }
 
   // Update active state based only on station index.
@@ -261,12 +386,20 @@ function updateCarousel(withTransition = true) {
   });
 
   // Update station info
-  const currentStationData = radioStations[currentIndex];
   document.getElementById("currentStationName").textContent =
     currentStationData.name;
   document.getElementById(
     "currentDJ"
   ).textContent = `DJ: ${currentStationData.dj}`;
 
-  // No disabling of arrows in infinite mode
+  // Apply theme immediately when centered
+  const body = document.body;
+  body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
+  if (currentStationData.game === "gtaiii") body.classList.add("theme-gtaiii");
+  else if (currentStationData.game === "gtavc")
+    body.classList.add("theme-gtavc");
+  else if (currentStationData.game === "gtasa")
+    body.classList.add("theme-gtasa");
+
+  // Autoplay handled above via scheduled playStaticThenStation
 }

@@ -70,39 +70,119 @@ function setupModal() {
 }
 
 // Open radio station modal
-function openRadio(station) {
+function playStationBackground(station) {
   currentStation = station;
-  const modal = document.getElementById("radioModal");
-  // Apply theme based on game
-  const body = document.body;
-  body.classList.remove("theme-gta3", "theme-gtavc", "theme-gtasa");
-  if (station.game === "gta3") body.classList.add("theme-gta3");
-  else if (station.game === "gtavc") body.classList.add("theme-gtavc");
-  else if (station.game === "gtasa") body.classList.add("theme-gtasa");
+  // Theme is now applied by carousel when centered; keep localStorage updated
+  try {
+    localStorage.setItem("lastStationId", station.id);
+    localStorage.setItem("lastTheme", station.game || "gtaiii");
+  } catch {}
 
-  // Update modal content
-  document.getElementById("modalLogo").src = station.logo;
-  document.getElementById("modalStationName").textContent = station.name;
-  document.getElementById("modalDJ").textContent = `DJ: ${station.dj}`;
-
-  // Set audio source
+  // Prepare audio
   audioPlayer.src = station.audioFile;
-
-  // Render tracklist
-  renderTracklist(station.tracks);
-
-  // Calculate synchronized position and play
+  audioPlayer.preload = "auto";
+  // Sync and play
   synchronizePlayback(station);
 
-  // Show modal
-  modal.style.display = "block";
-
-  // Update current track display periodically
+  // Keep track info updating even if modal is closed
   if (syncInterval) clearInterval(syncInterval);
   syncInterval = setInterval(() => {
     updateCurrentTrack(station);
     updateResyncButtonState();
   }, 1000);
+
+  // Show now playing toast
+  showNowPlayingToast(station);
+}
+
+let toastTimer = null;
+function showNowPlayingToast(station) {
+  let toast = document.getElementById("nowPlayingToast");
+  if (!toast) {
+    // Create toast dynamically if not present in DOM
+    toast = document.createElement("div");
+    toast.id = "nowPlayingToast";
+    toast.className = "now-playing-toast";
+    toast.setAttribute("aria-live", "polite");
+    toast.setAttribute("aria-atomic", "true");
+    toast.innerHTML = `
+      <img id="toastLogo" alt="Station Logo" />
+      <div class="toast-text">
+        <strong id="toastTitle">Now Playing</strong>
+        <span id="toastStation"></span>
+        <span id="toastTrack"></span>
+      </div>
+    `;
+    document.body.appendChild(toast);
+  }
+  const logo = document.getElementById("toastLogo");
+  const title = document.getElementById("toastTitle");
+  const stationSpan = document.getElementById("toastStation");
+  let trackSpan = document.getElementById("toastTrack");
+  if (!trackSpan) {
+    trackSpan = document.createElement("span");
+    trackSpan.id = "toastTrack";
+    toast.querySelector(".toast-text").appendChild(trackSpan);
+  }
+  logo.src = station.logo;
+  title.textContent = "Now Playing";
+  stationSpan.textContent = station.name;
+  // Compute current track quickly for initial toast info
+  const trackInfo = getCurrentTrackInfo(station);
+  if (trackInfo) {
+    trackSpan.textContent = `${trackInfo.artist} - ${trackInfo.title}`;
+  } else {
+    trackSpan.textContent = "";
+  }
+  toast.hidden = false;
+  // Animate in
+  toast.classList.add("show");
+  // Auto-hide after 2.5s
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
+}
+
+function getCurrentTrackInfo(station) {
+  try {
+    if (!audioPlayer || !station) return null;
+    const currentTime = audioPlayer.currentTime;
+    let accumulated = 0;
+    for (let i = 0; i < station.tracks.length; i++) {
+      const t = station.tracks[i];
+      if (currentTime < accumulated + t.duration) {
+        return { artist: t.artist, title: t.title, index: i };
+      }
+      accumulated += t.duration;
+    }
+    // If exceeded, wrap around
+    const last = station.tracks[station.tracks.length - 1];
+    return {
+      artist: last.artist,
+      title: last.title,
+      index: station.tracks.length - 1,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function openRadio(station) {
+  const modal = document.getElementById("radioModal");
+  // Update modal content
+  document.getElementById("modalLogo").src = station.logo;
+  document.getElementById("modalStationName").textContent = station.name;
+  document.getElementById("modalDJ").textContent = `DJ: ${station.dj}`;
+
+  // Render tracklist
+  renderTracklist(station.tracks);
+
+  // Start background playback (theme already handled by carousel)
+  playStationBackground(station);
+
+  // Show modal
+  modal.style.display = "block";
 }
 
 // Stop radio playback
@@ -289,6 +369,12 @@ function updateCurrentTrack(station) {
   document.getElementById(
     "currentTrack"
   ).textContent = `Now Playing: ${currentTrack.artist} - ${currentTrack.title}`;
+
+  // Also reflect on the toast if present
+  const toastTrack = document.getElementById("toastTrack");
+  if (toastTrack) {
+    toastTrack.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
+  }
 
   // Highlight current track in list
   document.querySelectorAll(".tracklist li").forEach((li, index) => {

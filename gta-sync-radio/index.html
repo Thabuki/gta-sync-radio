@@ -70,7 +70,24 @@
       </div>
     </div>
 
-    <script src="js/data/gta3-stations.js"></script>
+    <!-- Now Playing Toast -->
+    <div
+      id="nowPlayingToast"
+      aria-live="polite"
+      aria-atomic="true"
+      class="now-playing-toast"
+      hidden
+    >
+      <img id="toastLogo" alt="Station Logo" />
+      <div class="toast-text">
+        <strong id="toastTitle">Now Playing</strong>
+        <span id="toastStation"></span>
+      </div>
+    </div>
+
+    <script src="js/data/gtaiii-stations.js"></script>
+    <script src="js/data/gtavc-stations.js"></script>
+    <script src="js/data/gtasa-stations.js"></script>
     <script src="js/carousel.js"></script>
     <script src="js/player.js"></script>
     <script src="js/main.js"></script>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="gta-sync-radio/" />
+    <title>GTA 3D Era Radio Player</title>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/carousel.css" />
+    <link rel="stylesheet" href="css/modal.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>GTA 3D Era Radio Stations</h1>
+        <p class="subtitle">
+          Synchronized radio experience - Listen together in real-time
+        </p>
+      </header>
+
+      <div class="carousel-container">
+        <button class="carousel-arrow carousel-arrow-left" id="prevBtn">
+          ‹
+        </button>
+        <div class="carousel-wrapper">
+          <div class="radio-carousel" id="radioCarousel">
+            <!-- Radio stations will be populated by JavaScript -->
+          </div>
+        </div>
+        <button class="carousel-arrow carousel-arrow-right" id="nextBtn">
+          ›
+        </button>
+      </div>
+
+      <div class="station-info" id="stationInfo">
+        <h2 id="currentStationName">Select a radio station</h2>
+        <p id="currentDJ"></p>
+      </div>
+    </div>
+
+    <!-- Modal for radio player -->
+    <div id="radioModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="player-header">
+          <img id="modalLogo" src="" alt="Radio Logo" class="modal-logo" />
+          <div class="player-info">
+            <h2 id="modalStationName"></h2>
+            <p id="modalDJ" class="dj-name"></p>
+          </div>
+        </div>
+
+        <div class="audio-player">
+          <audio id="audioPlayer" controls>
+            Your browser does not support the audio element.
+          </audio>
+          <div class="sync-info">
+            <p>🔄 Synchronized playback active</p>
+            <p id="currentTrack" class="current-track"></p>
+            <button id="resyncBtn" class="resync-btn">
+              🕐 Re-sync to Clock
+            </button>
+          </div>
+        </div>
+
+        <div class="tracklist">
+          <h3>Tracklist</h3>
+          <ul id="tracklistContent"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Now Playing Toast -->
+    <div
+      id="nowPlayingToast"
+      aria-live="polite"
+      aria-atomic="true"
+      class="now-playing-toast"
+      hidden
+    >
+      <img id="toastLogo" alt="Station Logo" />
+      <div class="toast-text">
+        <strong id="toastTitle">Now Playing</strong>
+        <span id="toastStation"></span>
+      </div>
+    </div>
+
+    <script src="js/data/gtaiii-stations.js"></script>
+    <script src="js/data/gtavc-stations.js"></script>
+    <script src="js/data/gtasa-stations.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
