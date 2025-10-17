@@ -4,18 +4,8 @@
     font-size: 2rem;
   }
 
-  .carousel-wrapper {
-    max-width: 280px;
-  }
-
-  .radio-card {
-    flex: 0 0 150px;
-  }
-
-  .radio-logo {
-    width: 100px;
-    height: 100px;
-  }
+  /* Carousel sizing is handled in css/carousel.css for mobile.
+     Remove conflicting width overrides here to avoid misalignment. */
 
   .radio-card h2 {
     font-size: 0.95rem;

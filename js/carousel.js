@@ -359,6 +359,23 @@ function setupCarouselControls() {
       setTimeout(() => swipeIndicator.classList.remove("active"), 700);
     }
   });
+
+  // Recenter on resize/orientation changes (mobile misalignment fix)
+  let resizeRaf = null;
+  const handleResize = () => {
+    if (resizeRaf) return;
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = null;
+      // Force recalculation of translate based on new widths
+      updateCarousel(false);
+    });
+  };
+  window.addEventListener("resize", handleResize);
+  window.addEventListener("orientationchange", () => {
+    // Some browsers fire orientationchange before layout settles
+    setTimeout(handleResize, 50);
+    setTimeout(handleResize, 250);
+  });
 }
 
 // Move to next station
