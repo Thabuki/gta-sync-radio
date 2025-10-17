@@ -1,36 +1,3 @@
-/* Swipe gesture indicator for mobile */
-.swipe-indicator {
-  display: none;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.6rem;
-  color: var(--accent, #4a90e2);
-  margin-bottom: 8px;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-}
-.swipe-indicator.active {
-  display: flex;
-  opacity: 1;
-  animation: swipePulse 0.7s;
-}
-@keyframes swipePulse {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.7;
-  }
-}
-@media (max-width: 600px) {
-  .swipe-indicator {
-    display: flex;
-  }
-}
 /* Game Filter Row */
 .game-filter-row {
   display: flex;
@@ -135,13 +102,14 @@
 /* Mobile adjustments: show one centered card with equal peeks */
 @media (max-width: 600px) {
   .carousel-wrapper {
-    max-width: 100%;
+    max-width: none; /* allow full viewport width */
+    width: 100%;
     padding: 12px 0; /* tighten vertical padding */
   }
 
   .radio-carousel {
     gap: 14px; /* smaller gap so neighbors peek nicely */
-    padding: 0 12px; /* symmetric side padding for equal peeks */
+    padding: 0 12px; /* provide side gutters, JS accounts for this */
   }
 
   .radio-card {

@@ -311,7 +311,6 @@ function setupCarouselControls() {
   let touchStartY = 0;
   let touchActive = false;
   const threshold = 30; // pixels
-  const swipeIndicator = document.getElementById("swipeIndicator");
 
   listEl.addEventListener(
     "touchstart",
@@ -320,10 +319,7 @@ function setupCarouselControls() {
       touchActive = true;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
-      if (swipeIndicator) {
-        swipeIndicator.classList.add("active");
-        setTimeout(() => swipeIndicator.classList.remove("active"), 700);
-      }
+      // Swipe hint removed
     },
     { passive: true }
   );
@@ -354,10 +350,7 @@ function setupCarouselControls() {
     } else {
       moveToPrevious();
     }
-    if (swipeIndicator) {
-      swipeIndicator.classList.add("active");
-      setTimeout(() => swipeIndicator.classList.remove("active"), 700);
-    }
+    // Swipe hint removed
   });
 
   // Recenter on resize/orientation changes (mobile misalignment fix)
@@ -470,11 +463,31 @@ function updateCarousel(withTransition = true) {
   // Compute offset based on actual rendered card + gap for precise centering
   const firstCard = cards[0];
   const carouselStyles = getComputedStyle(carouselElement);
-  // Some browsers may return 'normal' for gap; ensure a numeric fallback
-  const gapStr = carouselStyles.gap || carouselStyles.columnGap || "20";
-  let gap = parseFloat(gapStr);
-  if (Number.isNaN(gap)) gap = 20;
-  // Account for internal left padding on the flex track so centering is precise
+  // Some browsers may return 'normal' for gap; ensure a robust numeric value
+  let gap = NaN;
+  const gapCandidates = [
+    carouselStyles.gap,
+    carouselStyles.rowGap,
+    carouselStyles.columnGap,
+  ];
+  for (const g of gapCandidates) {
+    const v = parseFloat(g);
+    if (!Number.isNaN(v) && isFinite(v)) {
+      gap = v;
+      break;
+    }
+  }
+  // Final fallback: measure the visual gap between first two cards
+  if ((Number.isNaN(gap) || !isFinite(gap)) && cards.length >= 2) {
+    const r0 = cards[0].getBoundingClientRect();
+    const r1 = cards[1].getBoundingClientRect();
+    gap = Math.max(0, Math.round(r1.left - r0.right));
+  }
+  if (Number.isNaN(gap) || !isFinite(gap)) {
+    // Heuristic fallback based on breakpoint
+    gap = window.innerWidth <= 600 ? 14 : 20;
+  }
+  // Account for inner/outer padding: on mobile we set track padding to 0 and use wrapper padding
   const paddingLeftStr = carouselStyles.paddingLeft || "0";
   let paddingLeft = parseFloat(paddingLeftStr);
   if (Number.isNaN(paddingLeft)) paddingLeft = 0;
@@ -490,19 +503,47 @@ function updateCarousel(withTransition = true) {
   // Calculate the center position using the wrapper (not the transformed track)
   const wrapper = document.querySelector(".carousel-wrapper");
   let centerOffset = 0;
+  let targetOffsetLeft = null;
   if (cards[window.visualIndex]) {
     const targetCard = cards[window.visualIndex];
-    const wrapperWidth =
+    const wrapperStyles = wrapper ? getComputedStyle(wrapper) : null;
+    const wrapperPaddingLeft = wrapperStyles
+      ? parseFloat(wrapperStyles.paddingLeft) || 0
+      : 0;
+    const wrapperPaddingRight = wrapperStyles
+      ? parseFloat(wrapperStyles.paddingRight) || 0
+      : 0;
+    const wrapperWidthRaw =
       (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
+    const wrapperWidth = Math.max(
+      0,
+      wrapperWidthRaw - wrapperPaddingLeft - wrapperPaddingRight
+    );
     const targetWidth = targetCard.offsetWidth || cardWidth;
     centerOffset = wrapperWidth / 2 - targetWidth / 2;
+    // Use actual DOM layout offset to avoid rounding drift
+    targetOffsetLeft = targetCard.offsetLeft;
   } else {
-    const wrapperWidth =
+    const wrapperStyles = wrapper ? getComputedStyle(wrapper) : null;
+    const wrapperPaddingLeft = wrapperStyles
+      ? parseFloat(wrapperStyles.paddingLeft) || 0
+      : 0;
+    const wrapperPaddingRight = wrapperStyles
+      ? parseFloat(wrapperStyles.paddingRight) || 0
+      : 0;
+    const wrapperWidthRaw =
       (wrapper && wrapper.clientWidth) || carouselElement.clientWidth || 0;
+    const wrapperWidth = Math.max(
+      0,
+      wrapperWidthRaw - wrapperPaddingLeft - wrapperPaddingRight
+    );
     centerOffset = wrapperWidth / 2 - cardWidth / 2;
   }
-  // Subtract the cumulative offset including initial left padding
-  const translateX = centerOffset - (window.visualIndex * offset + paddingLeft);
+  // Compute translate using measured offsetLeft when possible for precision
+  const translateX =
+    targetOffsetLeft != null
+      ? centerOffset - (targetOffsetLeft - paddingLeft)
+      : centerOffset - window.visualIndex * offset - paddingLeft;
 
   // Enable or disable transition
   if (withTransition) {

@@ -142,6 +142,16 @@ body::-webkit-scrollbar-thumb:hover {
   z-index: 1;
 }
 
+/* Mobile: align wrapper with viewport to keep carousel centered */
+@media (max-width: 600px) {
+  body {
+    padding: 0; /* avoid vw vs wrapper width mismatch */
+  }
+  .container {
+    padding: 0; /* let wrapper span full viewport width */
+  }
+}
+
 header {
   text-align: center;
   margin-bottom: 40px;
