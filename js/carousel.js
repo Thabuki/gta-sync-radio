@@ -103,6 +103,10 @@ const reduceMotion =
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Background fade control (avoid interruptions during rapid changes)
+let bgFadeTimer = null; // legacy timer usage, we'll switch to debounce
+let bgFadeDebounceTimer = null;
+
 // Initialize carousel
 function initCarousel() {
   // After using window.currentIndex/visualIndex, clear them to avoid interference
@@ -295,7 +299,11 @@ function setupCarouselControls() {
       card = card.parentElement;
     }
     if (!card || !card.classList.contains("radio-card")) return;
-    focusStationByCard(card, true);
+    // Only open modal if the clicked card is already centered (middle one)
+    const cards = Array.from(document.querySelectorAll(".radio-card"));
+    const domIndex = cards.indexOf(card);
+    const isCentered = domIndex === window.visualIndex;
+    focusStationByCard(card, isCentered);
   });
 
   // Touch swipe navigation
@@ -565,19 +573,81 @@ function updateCarousel(withTransition = true) {
     document.getElementById("stationInfo").appendChild(volumeControl);
   }
 
-  // Apply theme immediately when centered
-  const body = document.body;
-  body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
-  if (currentStationData.game === "gtaiii") body.classList.add("theme-gtaiii");
-  else if (currentStationData.game === "gtavc")
-    body.classList.add("theme-gtavc");
-  else if (currentStationData.game === "gtasa")
-    body.classList.add("theme-gtasa");
+  // Apply theme with background crossfade
+  applyThemeWithFade(currentStationData.game);
 
   // Update game logo based on current game
   updateGameLogo(currentStationData.game);
 
   // Autoplay handled above via scheduled playStaticThenStation
+}
+// Smoothly crossfade background when theme changes
+function applyThemeWithFade(game) {
+  const body = document.body;
+  const fader = document.getElementById("bgFader");
+  if (!body) return;
+
+  // Respect reduced motion
+  if (reduceMotion) {
+    body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
+    if (game === "gtaiii") body.classList.add("theme-gtaiii");
+    else if (game === "gtavc") body.classList.add("theme-gtavc");
+    else if (game === "gtasa") body.classList.add("theme-gtasa");
+    return;
+  }
+
+  // Prepare fader with the current background by freezing current body vars
+  if (fader) {
+    // Cancel any ongoing fade-out to avoid abrupt cuts
+    if (bgFadeTimer) {
+      try {
+        clearTimeout(bgFadeTimer);
+      } catch {}
+      bgFadeTimer = null;
+    }
+    if (bgFadeDebounceTimer) {
+      try {
+        clearTimeout(bgFadeDebounceTimer);
+      } catch {}
+      bgFadeDebounceTimer = null;
+    }
+    const styles = getComputedStyle(body);
+    const start = styles.getPropertyValue("--bg-start").trim();
+    const end = styles.getPropertyValue("--bg-end").trim();
+    fader.style.setProperty("--fader-bg-start", start);
+    fader.style.setProperty("--fader-bg-end", end);
+    // Jump to visible state without animating
+    fader.style.transition = "none";
+    fader.style.filter = "blur(10px)";
+    fader.style.opacity = "1";
+    // force reflow
+    void fader.offsetWidth;
+    // restore CSS-defined transition
+    fader.style.transition = "";
+
+    // While fader is visible, disable body background transition so changes behind don't pop
+    body.style.transition = "none";
+  }
+
+  // Swap theme class on body
+  body.classList.remove("theme-gtaiii", "theme-gtavc", "theme-gtasa");
+  if (game === "gtaiii") body.classList.add("theme-gtaiii");
+  else if (game === "gtavc") body.classList.add("theme-gtavc");
+  else if (game === "gtasa") body.classList.add("theme-gtasa");
+
+  // Debounce fade-out: keep fader up while user scrubs quickly
+  if (fader) {
+    bgFadeDebounceTimer = setTimeout(() => {
+      fader.style.opacity = "0";
+      fader.style.filter = "blur(0px)";
+      // After fade duration, restore body's transition so future single changes animate
+      bgFadeTimer = setTimeout(() => {
+        body.style.transition = "";
+        bgFadeTimer = null;
+      }, 1500); // a bit longer than CSS 1400ms to be safe
+      bgFadeDebounceTimer = null;
+    }, 250); // wait for 250ms of idle before fading out
+  }
 }
 
 // Update the game logo at the top

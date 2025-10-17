@@ -116,6 +116,7 @@ body {
   /* Firefox scrollbar */
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   scrollbar-width: thin;
+  transition: background 1400ms ease-in-out; /* slightly faster fade between theme backgrounds */
 }
 
 /* WebKit scrollbars (Chrome, Edge, Safari) */
@@ -137,6 +138,8 @@ body::-webkit-scrollbar-thumb:hover {
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative; /* keep content above bg fader */
+  z-index: 1;
 }
 
 header {
@@ -154,7 +157,24 @@ header {
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-  transition: opacity 0.3s ease;
+  transition: opacity 900ms ease-in-out, filter 900ms ease-in-out; /* slightly faster */
+}
+
+/* Background fader sits behind content to smooth theme changes */
+.bg-fader {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0; /* sits above body background, below content */
+  opacity: 0;
+  /* Use dedicated vars so JS can freeze previous colors on fader */
+  background: linear-gradient(
+    135deg,
+    var(--fader-bg-start, var(--bg-start)) 0%,
+    var(--fader-bg-end, var(--bg-end)) 100%
+  );
+  filter: blur(10px);
+  transition: opacity 1400ms ease-in-out, filter 1400ms ease-in-out;
 }
 
 /* Very small screens: scale logo down a bit more */
