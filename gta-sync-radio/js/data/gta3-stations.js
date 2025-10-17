@@ -3,8 +3,9 @@ const gta3Stations = [
   {
     id: "head-radio",
     name: "Head Radio",
+    game: "gta3",
     dj: "Michael Hunt",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/head-radio.webp",
     audioFile: "media/placeholder.mp3",
     tracks: [
       { artist: "Dil-Don't", title: "Stripe Summer", duration: 180 },
@@ -19,8 +20,9 @@ const gta3Stations = [
   {
     id: "double-clef-fm",
     name: "Double Clef FM",
+    game: "gta3",
     dj: "Morgan Merryweather",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/double-clef-fm.svg",
     audioFile: "media/placeholder.mp3",
     tracks: [
       {
@@ -58,8 +60,9 @@ const gta3Stations = [
   {
     id: "k-jah",
     name: "K-JAH",
+    game: "gta3",
     dj: 'Horace "The Pacifist" Walsh',
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/k-jah.svg",
     audioFile: "media/placeholder.mp3",
     tracks: [
       { artist: "Scientist", title: "Dance of the Vampires", duration: 240 },
@@ -72,8 +75,9 @@ const gta3Stations = [
   {
     id: "rise-fm",
     name: "Rise FM",
+    game: "gta3",
     dj: "Andre the Accelerator",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/rise-fm.webp",
     audioFile: "media/placeholder.mp3",
     tracks: [
       {
@@ -90,8 +94,9 @@ const gta3Stations = [
   {
     id: "lips-106",
     name: "Lips 106",
+    game: "gta3",
     dj: "Andee",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/lips-106.webp",
     audioFile: "media/placeholder.mp3",
     tracks: [
       { artist: "Fatamarse", title: "Bump To The Music", duration: 190 },
@@ -109,8 +114,9 @@ const gta3Stations = [
   {
     id: "game-radio",
     name: "Game Radio",
+    game: "gta3",
     dj: "Stretch Armstrong and Lord Sear",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/game-radio.webp",
     audioFile: "media/placeholder.mp3",
     tracks: [
       { artist: "Royce Da 5'9\"", title: "We're Live (Danger)", duration: 200 },
@@ -137,8 +143,9 @@ const gta3Stations = [
   {
     id: "msx-fm",
     name: "MSX FM",
+    game: "gta3",
     dj: "MC Codebreaker",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/msx-fm.svg",
     audioFile: "media/placeholder.mp3",
     tracks: [
       { artist: "Calyx", title: "Quagmire", duration: 220 },
@@ -157,8 +164,9 @@ const gta3Stations = [
   {
     id: "flashback-956",
     name: "Flashback 95.6",
+    game: "gta3",
     dj: "Toni",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/flashback-fm.webp",
     audioFile: "media/gta3/flashback-fm.mp3",
     tracks: [
       { artist: "Debbie Harry", title: "Rush Rush", duration: 230 },
@@ -175,8 +183,9 @@ const gta3Stations = [
   {
     id: "chatterbox-fm",
     name: "Chatterbox FM",
+    game: "gta3",
     dj: "Lazlow Jones",
-    logo: "img/placeholder.svg",
+    logo: "img/gta3/chatterbox-fm.svg",
     audioFile: "media/placeholder.mp3",
     tracks: [
       { artist: "Talk Show", title: "Continuous Talk Radio", duration: 3600 },

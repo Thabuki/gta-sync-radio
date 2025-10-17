@@ -69,13 +69,16 @@
 .modal-logo {
   width: 100px;
   height: 100px;
-  object-fit: cover;
-  border-radius: 10px;
+  object-fit: contain; /* fit full logo */
+  object-position: center;
+  border-radius: 12px;
+  padding: 8px;
+  background: #ffffff;
 }
 
 .player-info h2 {
   font-size: 1.8rem;
-  color: #667eea;
+  color: var(--accent);
   margin-bottom: 5px;
 }
 
@@ -94,8 +97,29 @@
   margin-bottom: 15px;
 }
 
+/* Hide download and playback speed controls */
+#audioPlayer::-webkit-media-controls-download-button {
+  display: none;
+}
+
+#audioPlayer::-webkit-media-controls-playback-speed-button {
+  display: none;
+}
+
+audio::-internal-media-controls-download-button {
+  display: none;
+}
+
+audio::-webkit-media-controls-enclosure {
+  overflow: hidden;
+}
+
+audio::-webkit-media-controls-panel {
+  width: calc(100% + 30px);
+}
+
 .sync-info {
-  background: #f0f4ff;
+  background: var(--surface);
   padding: 15px;
   border-radius: 10px;
   text-align: center;
@@ -103,7 +127,7 @@
 
 .sync-info p {
   margin: 5px 0;
-  color: #667eea;
+  color: var(--accent);
 }
 
 .current-track {
@@ -114,8 +138,8 @@
 .resync-btn {
   margin-top: 12px;
   padding: 10px 20px;
-  background: #667eea;
-  color: white;
+  background: var(--accent);
+  color: var(--text-on-accent);
   border: none;
   border-radius: 8px;
   font-size: 0.95rem;
@@ -125,7 +149,7 @@
 }
 
 .resync-btn:hover {
-  background: #764ba2;
+  background: var(--accent-2);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }

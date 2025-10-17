@@ -1,4 +1,26 @@
 /* Base styles and resets */
+:root {
+  /* Theme variables (defaults = GTA 3 for now) */
+  --bg-start: #667eea;
+  --bg-end: #764ba2;
+  --accent: #667eea;
+  --accent-2: #764ba2;
+  --surface: #f0f4ff;
+  --text-on-accent: #ffffff;
+  --text-primary: #333333;
+}
+
+/* Future themes can override these vars by applying a class on <body> */
+.theme-gta3 {
+  --bg-start: #667eea;
+  --bg-end: #764ba2;
+  --accent: #667eea;
+  --accent-2: #764ba2;
+  --surface: #f0f4ff;
+}
+
+/* .theme-gtavc and .theme-gtasa to be added later */
+
 * {
   margin: 0;
   padding: 0;
@@ -7,10 +29,10 @@
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
   min-height: 100vh;
   padding: 20px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .container {

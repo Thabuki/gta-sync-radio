@@ -17,48 +17,66 @@
 
 .radio-carousel {
   display: flex;
-  transition: transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+  /* Transition controlled via JS for consistency */
+  transition: none;
   gap: 20px;
   padding: 0 20px;
+  will-change: transform;
+  transform: translateZ(0); /* GPU hint */
 }
 
 .radio-card {
   flex: 0 0 200px;
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: opacity 0.2s ease;
   text-align: center;
-  opacity: 0.5;
-  transform: scale(0.85);
+  opacity: 0.8;
 }
 
 .radio-card.active {
   opacity: 1;
-  transform: scale(1.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  border: 3px solid #fff;
 }
 
 .radio-card:hover:not(.active) {
-  opacity: 0.8;
-  transform: scale(0.9);
+  opacity: 0.9;
 }
 
 .radio-logo {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 10px;
+  width: 140px;
+  height: 140px;
+  object-fit: contain; /* fit entire logo, no cropping */
+  object-position: center;
+  border-radius: 0;
+  padding: 0; /* focus purely on logo */
+  background: transparent;
   margin-bottom: 15px;
+  transition: transform 0.2s ease;
+}
+
+/* Subtle hint for active selection: scale logo slightly */
+.radio-card.active .radio-logo {
+  transform: scale(1.05);
+}
+
+/* Larger screens: slightly larger logos and wider gaps */
+@media (min-width: 1024px) {
+  .radio-logo {
+    width: 160px;
+    height: 160px;
+  }
+  .radio-carousel {
+    gap: 24px;
+  }
 }
 
 .radio-card h2 {
   font-size: 1.1rem;
   margin-bottom: 5px;
-  color: #667eea;
+  color: var(--accent);
 }
 
 .radio-card .dj-name {
@@ -66,6 +84,16 @@
   color: #666;
   font-style: italic;
   display: none; /* Hide on cards, show in station info */
+}
+
+/* By default, hide the station name under cards */
+.radio-card h2 {
+  display: none;
+}
+
+/* If the logo is a placeholder, show the name under the card */
+.radio-card .radio-logo[data-placeholder="true"] + h2 {
+  display: block;
 }
 
 .carousel-arrow {
@@ -82,7 +110,7 @@
   z-index: 10;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-  color: #667eea;
+  color: var(--accent);
   font-weight: bold;
   line-height: 1;
   display: flex;
@@ -102,4 +130,11 @@
 
 .carousel-arrow-right {
   right: 20px;
+}
+
+.carousel-arrow[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: translateY(-50%) scale(1);
+  box-shadow: none;
 }

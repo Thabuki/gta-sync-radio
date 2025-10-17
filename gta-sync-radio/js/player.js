@@ -73,6 +73,12 @@ function setupModal() {
 function openRadio(station) {
   currentStation = station;
   const modal = document.getElementById("radioModal");
+  // Apply theme based on game
+  const body = document.body;
+  body.classList.remove("theme-gta3", "theme-gtavc", "theme-gtasa");
+  if (station.game === "gta3") body.classList.add("theme-gta3");
+  else if (station.game === "gtavc") body.classList.add("theme-gtavc");
+  else if (station.game === "gtasa") body.classList.add("theme-gtasa");
 
   // Update modal content
   document.getElementById("modalLogo").src = station.logo;
