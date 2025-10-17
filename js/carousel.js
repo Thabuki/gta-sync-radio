@@ -213,11 +213,10 @@ function focusStationByCard(cardEl, allowOpenModal = false) {
     if (stationIdx >= radioStations.length)
       stationIdx = stationIdx - radioStations.length;
 
-    // If audio isn't currently playing, trigger static -> station handoff
-    const audioEl = document.getElementById("audioPlayer");
-    const shouldStartPlayback = !audioEl || audioEl.paused || !audioEl.src;
-    if (shouldStartPlayback) {
+    // If this isn't the currently playing station, trigger static -> station handoff
+    if (lastPlayedStationId !== radioStations[stationIdx].id) {
       playStaticThenStation(radioStations[stationIdx]);
+      lastPlayedStationId = radioStations[stationIdx].id;
     }
 
     if (allowOpenModal && typeof openRadio === "function") {
@@ -468,8 +467,7 @@ function updateCarousel(withTransition = true) {
       // Only trigger playback handoff if not already playing this station
       const audioEl = document.getElementById("audioPlayer");
       const alreadyThisStation = lastPlayedStationId === currentStationData.id;
-      const isPlaying = audioEl && !audioEl.paused && !!audioEl.src;
-      if (!alreadyThisStation && !isPlaying) {
+      if (!alreadyThisStation) {
         playStaticThenStation(currentStationData);
         lastPlayedStationId = currentStationData.id;
       }
@@ -478,8 +476,7 @@ function updateCarousel(withTransition = true) {
     isTransitioning = false;
     const audioEl = document.getElementById("audioPlayer");
     const alreadyThisStation = lastPlayedStationId === currentStationData.id;
-    const isPlaying = audioEl && !audioEl.paused && !!audioEl.src;
-    if (!alreadyThisStation && !isPlaying) {
+    if (!alreadyThisStation) {
       playStaticThenStation(currentStationData);
       lastPlayedStationId = currentStationData.id;
     }
