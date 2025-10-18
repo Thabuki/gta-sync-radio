@@ -11,8 +11,8 @@ const gtasaStations = [
     audioFile: "media/gtasa/playback-fm.mp3",
     tracks: [
       {
-        artist: "",
-        title: "Kool G Rap & DJ Polo – Road to the Riches",
+        artist: "Kool G Rap & DJ Polo",
+        title: "Road to the Riches",
         duration: 180,
       },
       { artist: "Big Daddy Kane", title: "Warm It Up, Kane", duration: 180 },
