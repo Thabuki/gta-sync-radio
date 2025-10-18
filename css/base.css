@@ -197,7 +197,7 @@ header {
   display: block;
   margin: 0 auto; /* center within container */
   object-fit: contain;
-  transform: translateX(var(--logo-shift, 0px));
+  transform: none;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   transition: opacity 900ms ease-in-out, filter 900ms ease-in-out; /* slightly faster */
 }

@@ -83,7 +83,8 @@
   display: block;
   margin-left: auto;
   margin-right: auto; /* ensure perfect centering within card */
-  transform: translateX(var(--logo-shift, 0px));
+  /* Assets are trimmed; no extra horizontal shift */
+  transform: none;
   transition: transform 0.2s ease;
 }
 

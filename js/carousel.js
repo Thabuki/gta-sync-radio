@@ -5,93 +5,7 @@ let lastClickTime = 0;
 let firstInteractionHandled = false;
 let firstCenteredClickHandled = false;
 
-// Cache of measured horizontal visual deltas per image src (in natural pixels)
-const _logoCenterCache = new Map();
-
-// Measure horizontal opaque bounds and return delta of visual center vs file center (in natural px)
-function _measureHorizontalDelta(img) {
-  const src = img.currentSrc || img.src;
-  if (_logoCenterCache.has(src)) return _logoCenterCache.get(src);
-  const w = img.naturalWidth;
-  const h = img.naturalHeight;
-  if (!w || !h) return 0;
-  const canvas = document.createElement("canvas");
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext("2d");
-  try {
-    ctx.drawImage(img, 0, 0);
-    const { data } = ctx.getImageData(0, 0, w, h);
-    const threshold = 8; // alpha > 8 considered opaque-ish
-    let left = w,
-      right = -1;
-    // Sample every 2px vertically for speed
-    for (let x = 0; x < w; x++) {
-      for (let y = 0; y < h; y += 2) {
-        const idx = (y * w + x) * 4 + 3; // alpha channel
-        if (data[idx] > threshold) {
-          left = Math.min(left, x);
-          break;
-        }
-      }
-    }
-    for (let x = w - 1; x >= 0; x--) {
-      for (let y = 0; y < h; y += 2) {
-        const idx = (y * w + x) * 4 + 3;
-        if (data[idx] > threshold) {
-          right = Math.max(right, x);
-          break;
-        }
-      }
-    }
-    if (right < left) {
-      _logoCenterCache.set(src, 0);
-      return 0;
-    }
-    const visualCenter = (left + right) / 2;
-    const fileCenter = w / 2;
-    const delta = visualCenter - fileCenter; // + = content weighted right
-    _logoCenterCache.set(src, delta);
-    return delta;
-  } catch {
-    return 0;
-  }
-}
-
-function _applyVisualCenter(img) {
-  if (!img || !img.naturalWidth) return;
-  const delta = _measureHorizontalDelta(img);
-  const scale =
-    img.clientWidth && img.naturalWidth
-      ? img.clientWidth / img.naturalWidth
-      : 1;
-  const shiftPx = -(delta * scale);
-  if (img.classList.contains("radio-logo")) {
-    img.style.setProperty("--logo-shift", `${shiftPx.toFixed(2)}px`);
-  } else if (img.id === "gameLogo") {
-    img.style.setProperty("--logo-shift", `${shiftPx.toFixed(2)}px`);
-  }
-}
-
-function ensureVisualCentering(img) {
-  if (!img) return;
-  if (img.complete && img.naturalWidth) {
-    _applyVisualCenter(img);
-  } else {
-    img.addEventListener("load", () => _applyVisualCenter(img), { once: true });
-  }
-}
-
-function reapplyVisualCenterAll() {
-  document
-    .querySelectorAll(".radio-logo, #gameLogo")
-    .forEach((img) => _applyVisualCenter(img));
-}
-
-window.addEventListener("resize", () => {
-  // Recompute shift in CSS pixels using cached natural delta
-  reapplyVisualCenterAll();
-});
+// All assets are assumed trimmed; no dynamic visual centering needed.
 
 function playStaticThenStation(station) {
   // Prefer MP3 (fast decode) but gracefully fall back to existing wav/ogg if mp3s aren't present
@@ -277,12 +191,7 @@ function renderRadioStations() {
     carousel.appendChild(clone);
   }
 
-  // After rendering, ensure logos are visually centered
-  requestAnimationFrame(() => {
-    document
-      .querySelectorAll(".radio-logo")
-      .forEach((img) => ensureVisualCentering(img));
-  });
+  // Assets are trimmed; no extra visual centering pass required
 }
 
 // Create a station card element
@@ -851,7 +760,6 @@ function updateGameLogo(game) {
       gameLogo.src = newSrc;
       gameLogo.alt = game.toUpperCase() + " Logo";
       gameLogo.style.opacity = "1";
-      ensureVisualCentering(gameLogo);
     }, 150);
   }
 }

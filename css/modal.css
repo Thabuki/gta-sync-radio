@@ -74,6 +74,8 @@
   border-radius: 12px;
   padding: 8px;
   background: #ffffff;
+  /* Assets are trimmed; no extra horizontal shift */
+  transform: none;
 }
 
 .player-info h2 {
