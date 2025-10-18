@@ -143,10 +143,24 @@ function playStationBackground(station) {
     currentStation &&
     currentStation.id === station.id &&
     audioPlayer &&
-    !audioPlayer.paused &&
     audioPlayer.src === station.audioFile
   ) {
-    // Already playing, just show modal
+    // Already playing this station
+    const dur = audioPlayer.duration;
+    if (isFinite(dur) && dur > 0) {
+      const now = Date.now() / 1000;
+      const expectedPos = now % dur;
+      const drift = Math.abs(audioPlayer.currentTime - expectedPos);
+      // If already in sync (within 0.1s), just resume
+      if (drift < 0.1) {
+        if (audioPlayer.paused && !audioPlayer.ended) {
+          audioPlayer.play();
+        }
+        return;
+      }
+    }
+    // Otherwise, seek to correct position
+    synchronizePlayback(station);
     return;
   }
 
