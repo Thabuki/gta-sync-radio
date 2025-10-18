@@ -80,7 +80,8 @@ function setupVolumeControl() {
   if (!slider) return;
   // Load saved volume
   const saved = parseFloat(localStorage.getItem("globalVolume"));
-  const vol = Number.isFinite(saved) ? Math.min(Math.max(saved, 0), 1) : 1;
+  // Default to 0.5 (50%) if no saved value
+  const vol = Number.isFinite(saved) ? Math.min(Math.max(saved, 0), 1) : 0.5;
   slider.value = String(vol);
   if (audioPlayer) audioPlayer.volume = vol;
   if (window.staticAudio) window.staticAudio.volume = Math.min(vol, 0.6);
