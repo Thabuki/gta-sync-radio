@@ -155,6 +155,19 @@ function playStationBackground(station) {
   if (syncInterval) clearInterval(syncInterval);
   syncInterval = setInterval(() => {
     updateResyncButtonState();
+    // Auto-correct drift: if we're out of sync but playing, gently nudge playback
+    if (currentStation && !audioPlayer.paused && !isSynced) {
+      const drift = checkSyncDrift();
+      // If drift is between 0.5 and 2 seconds, do a micro-correction
+      if (drift !== null && Math.abs(drift) > 0.5 && Math.abs(drift) < 2) {
+        const dur = audioPlayer.duration;
+        const now = Date.now() / 1000;
+        const expectedPos = now % dur;
+        audioPlayer.currentTime = expectedPos;
+        isSynced = true;
+        updateResyncButtonState();
+      }
+    }
   }, 1000);
 
   // Show now playing toast
@@ -263,6 +276,27 @@ function renderTracklist(tracks) {
 
 // jumpToTrack was removed (tracklist is static and non-interactive)
 
+// Check sync drift in seconds (returns null if can't calculate)
+function checkSyncDrift() {
+  if (!audioPlayer || !currentStation) return null;
+
+  const dur = audioPlayer.duration;
+  if (!isFinite(dur) || dur <= 0) return null;
+
+  const now = Date.now() / 1000;
+  const expectedPosition = now % dur;
+  const currentPosition = audioPlayer.currentTime % dur;
+
+  // Calculate the shortest drift (accounting for wrap-around)
+  let drift = expectedPosition - currentPosition;
+  if (Math.abs(drift) > dur / 2) {
+    // We're near the wrap-around point, adjust
+    drift = drift > 0 ? drift - dur : drift + dur;
+  }
+
+  return drift;
+}
+
 // Check if player is still in sync (within 2 seconds tolerance)
 function checkSyncStatus(station) {
   if (!audioPlayer || !station) return false;
@@ -270,17 +304,12 @@ function checkSyncStatus(station) {
   const dur = audioPlayer.duration;
   if (!isFinite(dur) || dur <= 0) return false;
 
-  const now = Date.now() / 1000; // Unix timestamp in seconds
+  const drift = checkSyncDrift();
+  if (drift === null) return false;
 
-  const expectedPosition = now % dur;
-  const currentPosition = audioPlayer.currentTime % dur;
-
-  // Allow 2 second tolerance for sync, including wrap-around near boundaries
+  // Allow 2 second tolerance for sync
   const syncTolerance = 2;
-  const timeDiff = Math.abs(expectedPosition - currentPosition);
-  const wrapDiff = Math.abs(timeDiff - dur);
-
-  return timeDiff <= syncTolerance || wrapDiff <= syncTolerance;
+  return Math.abs(drift) <= syncTolerance;
 }
 
 // Update resync button appearance based on sync status
@@ -322,30 +351,38 @@ function synchronizePlayback(station) {
     const dur = audioPlayer.duration;
     if (!isFinite(dur) || dur <= 0) return; // wait for metadata
 
-    // Get current Unix timestamp in seconds (seconds since Jan 1, 1970 UTC)
-    // This ensures everyone worldwide syncs to the same continuous timeline
-    const now = Date.now() / 1000; // milliseconds to seconds
+    // Calculate position RIGHT BEFORE seeking to minimize drift
+    // We'll recalculate after seek completes to account for seek time
+    const getExpectedPosition = () => {
+      const now = Date.now() / 1000; // Unix timestamp in seconds
+      return now % dur;
+    };
 
-    // Calculate position in the loop (modulo audio file duration)
-    // This means the audio has been "playing" continuously since the Unix epoch
-    const positionInLoop = now % dur;
+    const initialPosition = getExpectedPosition();
+    audioPlayer.currentTime = initialPosition;
 
-    // Set the audio player to this position
-    audioPlayer.currentTime = positionInLoop;
-
-    // Wait for seek to complete before marking as synced
+    // Wait for seek to complete, then adjust for elapsed time
     const handleSeeked = () => {
+      audioPlayer.removeEventListener("seeked", handleSeeked);
+
+      // Recalculate position to account for seek delay
+      const finalPosition = getExpectedPosition();
+      const drift = finalPosition - initialPosition;
+
+      // If drift is significant (> 0.1s), adjust before playing
+      if (Math.abs(drift) > 0.1 && drift < dur / 2) {
+        audioPlayer.currentTime = finalPosition;
+      }
+
       isSynced = true;
       updateResyncButtonState();
-      audioPlayer.removeEventListener("seeked", handleSeeked);
     };
-    audioPlayer.addEventListener("seeked", handleSeeked);
+    audioPlayer.addEventListener("seeked", handleSeeked, { once: true });
 
+    // Start playback - this will wait for seek to complete
     audioPlayer.play().catch(() => {
       console.log("Auto-play prevented. User interaction required.");
     });
-
-    // No per-track UI updates
   };
 
   if (!isFinite(audioPlayer.duration) || audioPlayer.duration <= 0) {
@@ -353,7 +390,7 @@ function synchronizePlayback(station) {
       audioPlayer.removeEventListener("loadedmetadata", onMeta);
       seekToExpected();
     };
-    audioPlayer.addEventListener("loadedmetadata", onMeta);
+    audioPlayer.addEventListener("loadedmetadata", onMeta, { once: true });
     // Ensure the browser fetches metadata
     if (audioPlayer.readyState === 0) {
       try {
