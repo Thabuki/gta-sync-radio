@@ -16,7 +16,6 @@ function initPlayer() {
       audioErrorMsg.textContent = msg || "Failed to load or play audio.";
       audioErrorModal.hidden = false;
     }
-    // Spinner logic removed
   }
   function hideErrorModal() {
     if (audioErrorModal) audioErrorModal.hidden = true;
@@ -78,10 +77,15 @@ function initPlayer() {
 function setupVolumeControl() {
   const slider = document.getElementById("volumeSlider");
   if (!slider) return;
+
+  // Check if already initialized to avoid duplicate listeners
+  if (slider.dataset.initialized === "true") return;
+  slider.dataset.initialized = "true";
+
   // Load saved volume
   const saved = parseFloat(localStorage.getItem("globalVolume"));
-  // Default to 0.5 (50%) if no saved value
-  const vol = Number.isFinite(saved) ? Math.min(Math.max(saved, 0), 1) : 0.5;
+  // Default to 0.25 (25%) if no saved value
+  const vol = Number.isFinite(saved) ? Math.min(Math.max(saved, 0), 1) : 0.25;
   slider.value = String(vol);
   if (audioPlayer) audioPlayer.volume = vol;
   if (window.staticAudio) window.staticAudio.volume = Math.min(vol, 0.6);
@@ -95,6 +99,9 @@ function setupVolumeControl() {
     } catch {}
   });
 }
+
+// Expose setupVolumeControl globally so carousel can call it after creating slider
+window.setupVolumeControl = setupVolumeControl;
 
 // Setup resync button
 function setupResyncButton() {
@@ -171,6 +178,11 @@ function playStationBackground(station) {
     localStorage.setItem("lastTheme", station.game || "gtaiii");
   } catch {}
 
+  // Apply saved volume before loading audio
+  const saved = parseFloat(localStorage.getItem("globalVolume"));
+  const vol = Number.isFinite(saved) ? Math.min(Math.max(saved, 0), 1) : 0.25;
+  audioPlayer.volume = vol;
+
   // Lazy-load: only set src when about to play
   audioPlayer.preload = "metadata";
   audioPlayer.src = station.audioFile;
@@ -239,8 +251,6 @@ function showNowPlayingToast(station) {
   }, 2500);
 }
 
-// getCurrentTrackInfo was removed (no per-track timing UI)
-
 function openRadio(station) {
   const modal = document.getElementById("radioModal");
   // Update modal content
@@ -299,8 +309,6 @@ function renderTracklist(tracks) {
     tracklistContent.appendChild(li);
   });
 }
-
-// jumpToTrack was removed (tracklist is static and non-interactive)
 
 // Check sync drift in seconds (returns null if can't calculate)
 function checkSyncDrift() {
@@ -407,7 +415,7 @@ function synchronizePlayback(station) {
 
     // Start playback - this will wait for seek to complete
     audioPlayer.play().catch(() => {
-      console.log("Auto-play prevented. User interaction required.");
+      // Auto-play prevented. User interaction required.
     });
   };
 

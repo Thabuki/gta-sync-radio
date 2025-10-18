@@ -199,8 +199,12 @@ function createStationCard(station, index) {
     /placeholder\.(svg|png)$/i.test(station.logo);
 
   card.innerHTML = `
-    <img src="${station.logo}" alt="${station.name}" class="radio-logo" loading="lazy" decoding="async" fetchpriority="low" data-placeholder="${/placeholder\.(svg|png)$/i.test(station.logo)}"
-      onerror="this.onerror=null;this.dataset.placeholder='true';this.src='img/placeholder.svg'">
+    <img src="${station.logo}" alt="${
+    station.name
+  }" class="radio-logo" loading="lazy" decoding="async" fetchpriority="low" data-placeholder="${/placeholder\.(svg|png)$/i.test(
+    station.logo
+  )}"
+      onerror="this.onerror=null;this.dataset.placeholder='true';this.src='img/placeholder.png'">
     <h2>${station.name}</h2>
     <p class="dj-name">DJ: ${station.dj}</p>
   `;
@@ -219,8 +223,6 @@ function focusStationByCard(cardEl, allowOpenModal = false) {
 
   // Ensure no stale "open after center" flags remain
   window._openModalAfterCenter = false;
-
-
 
   // Always center the card and open modal after transition
   window.visualIndex = cardIndexInDom;
@@ -314,7 +316,6 @@ function setupCarouselControls() {
       touchActive = true;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
-      // Swipe hint removed
     },
     { passive: true }
   );
@@ -345,7 +346,6 @@ function setupCarouselControls() {
     } else {
       moveToPrevious();
     }
-    // Swipe hint removed
   });
 
   // Recenter on resize/orientation changes (mobile misalignment fix)
@@ -434,9 +434,6 @@ function checkAndResetPosition(onAfterTransition) {
     if (typeof onAfterTransition === "function") onAfterTransition();
   }, 350);
 }
-
-// Start automatic rotation
-// Auto-rotate removed in clamped mode
 
 // Select a station
 function selectStation(index) {
@@ -616,14 +613,25 @@ function updateCarousel(withTransition = true) {
   // Add volume control after genre if not already present
   let volumeControl = document.getElementById("volumeControl");
   if (!volumeControl) {
+    // Load saved volume to use in initial value
+    const saved = parseFloat(localStorage.getItem("globalVolume"));
+    const initialVol = Number.isFinite(saved)
+      ? Math.min(Math.max(saved, 0), 1)
+      : 0.25;
+
     volumeControl = document.createElement("div");
     volumeControl.id = "volumeControl";
     volumeControl.className = "volume-control";
     volumeControl.innerHTML = `
       <label for="volumeSlider">Volume</label>
-      <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="1" />
+      <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="${initialVol}" />
     `;
     document.getElementById("stationInfo").appendChild(volumeControl);
+
+    // Wire up volume control after creating slider
+    if (typeof window.setupVolumeControl === "function") {
+      window.setupVolumeControl();
+    }
   }
 
   // Apply theme with background crossfade

@@ -120,8 +120,6 @@
   .radio-card:not(.active) {
     opacity: 0.6;
   }
-
-  /* Now Playing badge removed */
 }
 
 .radio-card h2 {

@@ -213,8 +213,6 @@ audio::-webkit-media-controls-panel {
   cursor: default;
 }
 
-/* hover styles removed for static list */
-
 .tracklist li.playing {
   background: #f0f4ff;
   border-left: 4px solid #667eea;
@@ -232,8 +230,6 @@ audio::-webkit-media-controls-panel {
   opacity: 0.8;
   cursor: default;
 }
-
-/* hover styles removed for static list */
 
 .tracklist li.commercial-track.playing {
   background: #ffe0b2;
