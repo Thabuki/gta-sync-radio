@@ -199,8 +199,8 @@ function createStationCard(station, index) {
     /placeholder\.(svg|png)$/i.test(station.logo);
 
   card.innerHTML = `
-    <img src="${station.logo}" alt="${station.name}" class="radio-logo" loading="lazy" decoding="async" fetchpriority="low"
-      onerror="this.onerror=null;this.src='img/placeholder.svg'">
+    <img src="${station.logo}" alt="${station.name}" class="radio-logo" loading="lazy" decoding="async" fetchpriority="low" data-placeholder="${/placeholder\.(svg|png)$/i.test(station.logo)}"
+      onerror="this.onerror=null;this.dataset.placeholder='true';this.src='img/placeholder.svg'">
     <h2>${station.name}</h2>
     <p class="dj-name">DJ: ${station.dj}</p>
   `;
@@ -220,12 +220,7 @@ function focusStationByCard(cardEl, allowOpenModal = false) {
   // Ensure no stale "open after center" flags remain
   window._openModalAfterCenter = false;
 
-  console.log("focusStationByCard called:", {
-    cardIndexInDom,
-    visualIndex,
-    currentIndex,
-    isCentered: cardIndexInDom === visualIndex,
-  });
+
 
   // Always center the card and open modal after transition
   window.visualIndex = cardIndexInDom;
@@ -720,11 +715,7 @@ function updateGameLogo(game) {
   };
 
   const newSrc = logoMap[game] || "";
-  if (
-    newSrc &&
-    gameLogo.src !==
-      location.origin + location.pathname.replace(/\/[^/]*$/, "/") + newSrc
-  ) {
+  if (newSrc && gameLogo.getAttribute("src") !== newSrc) {
     gameLogo.style.opacity = "0";
     setTimeout(() => {
       gameLogo.src = newSrc;

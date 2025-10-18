@@ -3,7 +3,6 @@ let currentStation = null;
 let audioPlayer = null;
 let syncInterval = null;
 let isSynced = false;
-let syncCheckInterval = null;
 
 // Initialize player
 function initPlayer() {
@@ -22,13 +21,7 @@ function initPlayer() {
   function hideErrorModal() {
     if (audioErrorModal) audioErrorModal.hidden = true;
   }
-  if (audioPlayer) {
-    audioPlayer.addEventListener("error", function (e) {
-      showErrorModal(
-        "Failed to load or play audio. Please check your connection or try again."
-      );
-    });
-  }
+  // Attach error listener after audio element is resolved below
   if (audioRetryBtn) {
     audioRetryBtn.onclick = function () {
       hideErrorModal();
@@ -43,20 +36,18 @@ function initPlayer() {
     };
   }
   audioPlayer = document.getElementById("audioPlayer");
+  // Attach audio error listener now that audioPlayer is resolved
+  if (audioPlayer) {
+    audioPlayer.addEventListener("error", function () {
+      showErrorModal(
+        "Failed to load or play audio. Please check your connection or try again."
+      );
+    });
+  }
+
   setupModal();
   setupResyncButton();
   setupVolumeControl();
-  // Spinner logic removed
-  // Mute button logic
-  const muteBtn = document.getElementById("muteBtn");
-  if (muteBtn) {
-    muteBtn.addEventListener("click", () => {
-      audioPlayer.muted = !audioPlayer.muted;
-      muteBtn.textContent = audioPlayer.muted ? "🔈 Unmute" : "🔇 Mute";
-    });
-    // Set initial state
-    muteBtn.textContent = audioPlayer.muted ? "🔈 Unmute" : "🔇 Mute";
-  }
 
   // Handle audio looping
   audioPlayer.addEventListener("ended", () => {
@@ -154,7 +145,7 @@ function playStationBackground(station) {
   } catch {}
 
   // Lazy-load: only set src when about to play
-  audioPlayer.preload = "none";
+  audioPlayer.preload = "metadata";
   audioPlayer.src = station.audioFile;
   audioPlayer.load();
   // Spinner logic removed
@@ -163,7 +154,6 @@ function playStationBackground(station) {
 
   if (syncInterval) clearInterval(syncInterval);
   syncInterval = setInterval(() => {
-    updateCurrentTrack(station);
     updateResyncButtonState();
   }, 1000);
 
@@ -171,14 +161,7 @@ function playStationBackground(station) {
   showNowPlayingToast(station);
 }
 
-// Unset src after playback ends to free memory
-if (audioPlayer) {
-  audioPlayer.addEventListener("ended", () => {
-    audioPlayer.src = "";
-    audioPlayer.removeAttribute("src");
-    audioPlayer.load();
-  });
-}
+// Note: audio source is managed per-station; we avoid extra listeners here
 
 let toastTimer = null;
 function showNowPlayingToast(station) {
@@ -217,29 +200,7 @@ function showNowPlayingToast(station) {
   }, 2500);
 }
 
-function getCurrentTrackInfo(station) {
-  try {
-    if (!audioPlayer || !station) return null;
-    const currentTime = audioPlayer.currentTime;
-    let accumulated = 0;
-    for (let i = 0; i < station.tracks.length; i++) {
-      const t = station.tracks[i];
-      if (currentTime < accumulated + t.duration) {
-        return { artist: t.artist, title: t.title, index: i };
-      }
-      accumulated += t.duration;
-    }
-    // If exceeded, wrap around
-    const last = station.tracks[station.tracks.length - 1];
-    return {
-      artist: last.artist,
-      title: last.title,
-      index: station.tracks.length - 1,
-    };
-  } catch {
-    return null;
-  }
-}
+// getCurrentTrackInfo was removed (no per-track timing UI)
 
 function openRadio(station) {
   const modal = document.getElementById("radioModal");
@@ -256,7 +217,6 @@ function openRadio(station) {
   playStationBackground(station);
 
   // Show modal
-  console.log("openRadio called: showing modal", modal);
   modal.style.display = "block";
 }
 
@@ -301,48 +261,28 @@ function renderTracklist(tracks) {
   });
 }
 
-// Jump to a specific track in the playlist
-function jumpToTrack(trackIndex) {
-  if (!currentStation || !audioPlayer) return;
-
-  // Calculate the timestamp where this track starts
-  let trackStartTime = 0;
-  for (let i = 0; i < trackIndex; i++) {
-    trackStartTime += currentStation.tracks[i].duration;
-  }
-
-  // Set audio player to that position
-  audioPlayer.currentTime = trackStartTime;
-
-  // Manual track jump breaks sync
-  isSynced = false;
-  updateResyncButtonState();
-
-  // Update the current track display immediately
-  updateCurrentTrack(currentStation);
-}
+// jumpToTrack was removed (tracklist is static and non-interactive)
 
 // Check if player is still in sync (within 2 seconds tolerance)
 function checkSyncStatus(station) {
   if (!audioPlayer || !station) return false;
 
-  const totalDuration = station.tracks.reduce(
-    (sum, track) => sum + track.duration,
-    0
-  );
+  const dur = audioPlayer.duration;
+  if (!isFinite(dur) || dur <= 0) return false;
 
   const now = new Date();
   const secondsSinceMidnight =
     now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
 
-  const expectedPosition = secondsSinceMidnight % totalDuration;
-  const currentPosition = audioPlayer.currentTime % totalDuration;
+  const expectedPosition = secondsSinceMidnight % dur;
+  const currentPosition = audioPlayer.currentTime % dur;
 
-  // Allow 2 second tolerance for sync
+  // Allow 2 second tolerance for sync, including wrap-around near boundaries
   const syncTolerance = 2;
   const timeDiff = Math.abs(expectedPosition - currentPosition);
+  const wrapDiff = Math.abs(timeDiff - dur);
 
-  return timeDiff <= syncTolerance;
+  return timeDiff <= syncTolerance || wrapDiff <= syncTolerance;
 }
 
 // Update resync button appearance based on sync status
@@ -380,41 +320,49 @@ function updateResyncButtonState() {
 
 // Synchronize playback based on UTC time (global sync across all timezones)
 function synchronizePlayback(station) {
-  // Calculate total duration of all tracks
-  const totalDuration = station.tracks.reduce(
-    (sum, track) => sum + track.duration,
-    0
-  );
+  const seekToExpected = () => {
+    const dur = audioPlayer.duration;
+    if (!isFinite(dur) || dur <= 0) return; // wait for metadata
 
-  // Get current time in seconds since midnight UTC
-  const now = new Date();
-  const secondsSinceMidnight =
-    now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
+    // Get current time in seconds since midnight UTC
+    const now = new Date();
+    const secondsSinceMidnight =
+      now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
 
-  // Calculate position in the loop (modulo total duration)
-  const positionInLoop = secondsSinceMidnight % totalDuration;
+    // Calculate position in the loop (modulo audio file duration)
+    const positionInLoop = secondsSinceMidnight % dur;
 
-  // Set the audio player to this position
-  audioPlayer.currentTime = positionInLoop;
+    // Set the audio player to this position
+    audioPlayer.currentTime = positionInLoop;
 
-  // Wait for seek to complete before marking as synced
-  const handleSeeked = () => {
-    isSynced = true;
-    updateResyncButtonState();
-    audioPlayer.removeEventListener("seeked", handleSeeked);
+    // Wait for seek to complete before marking as synced
+    const handleSeeked = () => {
+      isSynced = true;
+      updateResyncButtonState();
+      audioPlayer.removeEventListener("seeked", handleSeeked);
+    };
+    audioPlayer.addEventListener("seeked", handleSeeked);
+
+    audioPlayer.play().catch(() => {
+      console.log("Auto-play prevented. User interaction required.");
+    });
+
+    // No per-track UI updates
   };
-  audioPlayer.addEventListener("seeked", handleSeeked);
 
-  audioPlayer.play().catch((err) => {
-    console.log("Auto-play prevented. User interaction required.");
-  });
-
-  // Update the current track display
-  updateCurrentTrack(station);
-}
-
-// Update current track display (simplified - no longer updates DOM as those elements are removed)
-function updateCurrentTrack(station) {
-  // This function can be kept for future use or removed entirely if not needed
-  // Currently does nothing as the currentTrack display and track info are removed
+  if (!isFinite(audioPlayer.duration) || audioPlayer.duration <= 0) {
+    const onMeta = () => {
+      audioPlayer.removeEventListener("loadedmetadata", onMeta);
+      seekToExpected();
+    };
+    audioPlayer.addEventListener("loadedmetadata", onMeta);
+    // Ensure the browser fetches metadata
+    if (audioPlayer.readyState === 0) {
+      try {
+        audioPlayer.load();
+      } catch {}
+    }
+  } else {
+    seekToExpected();
+  }
 }
