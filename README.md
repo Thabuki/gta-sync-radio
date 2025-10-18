@@ -15,9 +15,9 @@ A web-based, in-sync radio player inspired by GTA III, Vice City, and San Andrea
 
 ## How it works
 
-- Each station is a single looped audio file (music + ads). The app maps the current UTC time onto the audio's own duration to pick the correct position in the loop.
+- Each station is a single looped audio file (music + ads). The app maps the current Unix timestamp (seconds since Jan 1, 1970 UTC) onto the audio's own duration to pick the correct position in the loop.
 - When you center a station card, a short static sound plays, then the station starts at the correct offset.
-- **Sync is timezone-agnostic**: uses UTC time so listeners in New York, London, and Tokyo all hear the same track at the same moment.
+- **Sync is timezone-agnostic**: uses Unix epoch time so listeners in New York, London, and Tokyo all hear the same track at the same moment.
 - The UI theme changes per game (colors, logo) and persists your last station.
 
 ## Usage
@@ -67,9 +67,9 @@ Um player de rádio na web, sincronizado, inspirado em GTA III, Vice City e San 
 
 ## Como funciona
 
-- Cada estação é um único arquivo de áudio em loop (músicas + anúncios). O app mapeia o horário UTC atual na própria duração do áudio para escolher a posição correta no loop.
+- Cada estação é um único arquivo de áudio em loop (músicas + anúncios). O app mapeia o timestamp Unix atual (segundos desde 1 de janeiro de 1970 UTC) na própria duração do áudio para escolher a posição correta no loop.
 - Ao centralizar um cartão de estação, um breve som de estática toca e, em seguida, a estação inicia no ponto correto.
-- **Sincronia independente de fuso horário**: usa horário UTC para que ouvintes em Nova York, Londres e Tóquio ouçam a mesma faixa no mesmo momento.
+- **Sincronia independente de fuso horário**: usa o tempo Unix epoch para que ouvintes em Nova York, Londres e Tóquio ouçam a mesma faixa no mesmo momento.
 - O tema visual muda conforme o jogo (cores, logotipo) e a última estação é lembrada.
 
 ## Uso

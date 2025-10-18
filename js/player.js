@@ -270,11 +270,9 @@ function checkSyncStatus(station) {
   const dur = audioPlayer.duration;
   if (!isFinite(dur) || dur <= 0) return false;
 
-  const now = new Date();
-  const secondsSinceMidnight =
-    now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
+  const now = Date.now() / 1000; // Unix timestamp in seconds
 
-  const expectedPosition = secondsSinceMidnight % dur;
+  const expectedPosition = now % dur;
   const currentPosition = audioPlayer.currentTime % dur;
 
   // Allow 2 second tolerance for sync, including wrap-around near boundaries
@@ -324,13 +322,13 @@ function synchronizePlayback(station) {
     const dur = audioPlayer.duration;
     if (!isFinite(dur) || dur <= 0) return; // wait for metadata
 
-    // Get current time in seconds since midnight UTC
-    const now = new Date();
-    const secondsSinceMidnight =
-      now.getUTCHours() * 3600 + now.getUTCMinutes() * 60 + now.getUTCSeconds();
+    // Get current Unix timestamp in seconds (seconds since Jan 1, 1970 UTC)
+    // This ensures everyone worldwide syncs to the same continuous timeline
+    const now = Date.now() / 1000; // milliseconds to seconds
 
     // Calculate position in the loop (modulo audio file duration)
-    const positionInLoop = secondsSinceMidnight % dur;
+    // This means the audio has been "playing" continuously since the Unix epoch
+    const positionInLoop = now % dur;
 
     // Set the audio player to this position
     audioPlayer.currentTime = positionInLoop;
