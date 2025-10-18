@@ -72,14 +72,18 @@
 }
 
 .radio-logo {
-  width: 140px;
-  height: 140px;
+  width: 160px;
+  height: 160px;
   object-fit: contain; /* fit entire logo, no cropping */
   object-position: center;
   border-radius: 0;
   padding: 0; /* focus purely on logo */
   background: transparent;
   margin-bottom: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto; /* ensure perfect centering within card */
+  transform: translateX(var(--logo-shift, 0px));
   transition: transform 0.2s ease;
 }
 
@@ -91,8 +95,8 @@
 /* Larger screens: slightly larger logos and wider gaps */
 @media (min-width: 1024px) {
   .radio-logo {
-    width: 160px;
-    height: 160px;
+    width: 180px;
+    height: 180px;
   }
   .radio-carousel {
     gap: 24px;
@@ -186,4 +190,24 @@
   cursor: not-allowed;
   transform: translateY(-50%) scale(1);
   box-shadow: none;
+}
+
+/* Links inside cards: theme-styled, no underline */
+.radio-card a {
+  text-decoration: none;
+  color: var(--accent);
+  font-weight: 600;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.radio-card a:visited {
+  color: var(--accent);
+}
+.radio-card a:hover {
+  color: var(--accent-2);
+  text-decoration: none;
+}
+.radio-card a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }

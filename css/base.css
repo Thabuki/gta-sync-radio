@@ -119,6 +119,28 @@ body {
   transition: background 1400ms ease-in-out; /* slightly faster fade between theme backgrounds */
 }
 
+/* Background audio visualizer canvas */
+.bg-visualizer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* below main content container which uses higher stacking contexts */
+  pointer-events: none;
+  opacity: 0.25; /* keep subtle */
+}
+
+/* Ensure main content sits above visualizer */
+.container,
+header,
+.carousel-container,
+.station-info,
+.modal,
+.now-playing-toast {
+  position: relative;
+  z-index: 2;
+}
+
 /* WebKit scrollbars (Chrome, Edge, Safari) */
 body::-webkit-scrollbar {
   width: 10px;
@@ -160,12 +182,22 @@ header {
 
 .game-logo-container {
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px; /* reserve space to prevent layout jitter */
+  width: 240px; /* match base image width for perfect centering */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .game-logo {
   height: 120px;
-  width: auto;
+  width: 240px; /* fixed width box to avoid center shift across varying aspect ratios */
+  display: block;
+  margin: 0 auto; /* center within container */
   object-fit: contain;
+  transform: translateX(var(--logo-shift, 0px));
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   transition: opacity 900ms ease-in-out, filter 900ms ease-in-out; /* slightly faster */
 }
@@ -198,12 +230,20 @@ header {
 @media (min-width: 768px) {
   .game-logo {
     height: 140px;
+    width: 280px;
+  }
+  .game-logo-container {
+    width: 280px;
   }
 }
 
 @media (min-width: 1200px) {
   .game-logo {
     height: 160px;
+    width: 320px;
+  }
+  .game-logo-container {
+    width: 320px;
   }
 }
 
@@ -217,6 +257,9 @@ header h1 {
   font-size: 1.1rem;
   opacity: 0.9;
 }
+
+/* Header controls: mode toggle + listening indicator */
+/* removed header mode/listening controls */
 
 /* Smaller subtitle on mobile */
 @media (max-width: 480px) {

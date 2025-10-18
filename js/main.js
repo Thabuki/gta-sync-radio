@@ -22,6 +22,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   initCarousel();
   initPlayer();
+  // Register Service Worker (PWA + caching)
+  if ("serviceWorker" in navigator) {
+    const swPath =
+      (location.pathname.endsWith("/")
+        ? location.pathname
+        : location.pathname.replace(/\/[^/]*$/, "/")) + "sw.js";
+    try {
+      navigator.serviceWorker.register(swPath);
+    } catch {}
+  }
+  // Keyboard shortcut: Space toggles play/pause
+  document.addEventListener("keydown", (e) => {
+    const modal = document.getElementById("radioModal");
+    if (
+      e.target &&
+      (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")
+    )
+      return;
+    if (e.code === "Space" || e.key === " ") {
+      e.preventDefault();
+      const audio = document.getElementById("audioPlayer");
+      if (audio) {
+        if (audio.paused) {
+          try {
+            audio.play();
+          } catch {}
+        } else {
+          try {
+            audio.pause();
+          } catch {}
+        }
+      }
+    }
+  });
   // Game filter event
   const gameFilter = document.getElementById("gameFilter");
   if (gameFilter) {

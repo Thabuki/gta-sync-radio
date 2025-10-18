@@ -2,6 +2,96 @@
 let staticAudio = null;
 let lastClickedCardIndex = -1;
 let lastClickTime = 0;
+let firstInteractionHandled = false;
+let firstCenteredClickHandled = false;
+
+// Cache of measured horizontal visual deltas per image src (in natural pixels)
+const _logoCenterCache = new Map();
+
+// Measure horizontal opaque bounds and return delta of visual center vs file center (in natural px)
+function _measureHorizontalDelta(img) {
+  const src = img.currentSrc || img.src;
+  if (_logoCenterCache.has(src)) return _logoCenterCache.get(src);
+  const w = img.naturalWidth;
+  const h = img.naturalHeight;
+  if (!w || !h) return 0;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  try {
+    ctx.drawImage(img, 0, 0);
+    const { data } = ctx.getImageData(0, 0, w, h);
+    const threshold = 8; // alpha > 8 considered opaque-ish
+    let left = w,
+      right = -1;
+    // Sample every 2px vertically for speed
+    for (let x = 0; x < w; x++) {
+      for (let y = 0; y < h; y += 2) {
+        const idx = (y * w + x) * 4 + 3; // alpha channel
+        if (data[idx] > threshold) {
+          left = Math.min(left, x);
+          break;
+        }
+      }
+    }
+    for (let x = w - 1; x >= 0; x--) {
+      for (let y = 0; y < h; y += 2) {
+        const idx = (y * w + x) * 4 + 3;
+        if (data[idx] > threshold) {
+          right = Math.max(right, x);
+          break;
+        }
+      }
+    }
+    if (right < left) {
+      _logoCenterCache.set(src, 0);
+      return 0;
+    }
+    const visualCenter = (left + right) / 2;
+    const fileCenter = w / 2;
+    const delta = visualCenter - fileCenter; // + = content weighted right
+    _logoCenterCache.set(src, delta);
+    return delta;
+  } catch {
+    return 0;
+  }
+}
+
+function _applyVisualCenter(img) {
+  if (!img || !img.naturalWidth) return;
+  const delta = _measureHorizontalDelta(img);
+  const scale =
+    img.clientWidth && img.naturalWidth
+      ? img.clientWidth / img.naturalWidth
+      : 1;
+  const shiftPx = -(delta * scale);
+  if (img.classList.contains("radio-logo")) {
+    img.style.setProperty("--logo-shift", `${shiftPx.toFixed(2)}px`);
+  } else if (img.id === "gameLogo") {
+    img.style.setProperty("--logo-shift", `${shiftPx.toFixed(2)}px`);
+  }
+}
+
+function ensureVisualCentering(img) {
+  if (!img) return;
+  if (img.complete && img.naturalWidth) {
+    _applyVisualCenter(img);
+  } else {
+    img.addEventListener("load", () => _applyVisualCenter(img), { once: true });
+  }
+}
+
+function reapplyVisualCenterAll() {
+  document
+    .querySelectorAll(".radio-logo, #gameLogo")
+    .forEach((img) => _applyVisualCenter(img));
+}
+
+window.addEventListener("resize", () => {
+  // Recompute shift in CSS pixels using cached natural delta
+  reapplyVisualCenterAll();
+});
 
 function playStaticThenStation(station) {
   // Prefer MP3 (fast decode) but gracefully fall back to existing wav/ogg if mp3s aren't present
@@ -186,6 +276,13 @@ function renderRadioStations() {
     clone.classList.add("clone", "clone-after");
     carousel.appendChild(clone);
   }
+
+  // After rendering, ensure logos are visually centered
+  requestAnimationFrame(() => {
+    document
+      .querySelectorAll(".radio-logo")
+      .forEach((img) => ensureVisualCentering(img));
+  });
 }
 
 // Create a station card element
@@ -239,10 +336,14 @@ function focusStationByCard(cardEl, allowOpenModal = false) {
   } catch {}
   isTransitioning = true;
   updateCarousel(true);
-  // After transition, open modal if requested
+  // After transition, open modal if requested and audio is already playing
   if (allowOpenModal && typeof openRadio === "function") {
     setTimeout(() => {
-      openRadio(radioStations[stationIdx]);
+      const audioEl = document.getElementById("audioPlayer");
+      const isPlaying = audioEl && !audioEl.paused && !!audioEl.src;
+      if (isPlaying) {
+        openRadio(radioStations[stationIdx]);
+      }
     }, 350); // match transition duration
   }
 }
@@ -276,13 +377,13 @@ function setupCarouselControls() {
     }
   });
 
-  // Keyboard navigation
+  // Keyboard navigation: handle only arrows and Enter here
   document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") {
       prevBtn.click();
     } else if (e.key === "ArrowRight") {
       nextBtn.click();
-    } else if (e.key === "Enter" || e.key === " ") {
+    } else if (e.key === "Enter") {
       openRadio(radioStations[currentIndex]);
     }
   });
@@ -296,10 +397,30 @@ function setupCarouselControls() {
       card = card.parentElement;
     }
     if (!card || !card.classList.contains("radio-card")) return;
-    // Only open modal if the clicked card is already centered (middle one)
     const cards = Array.from(document.querySelectorAll(".radio-card"));
     const domIndex = cards.indexOf(card);
     const isCentered = domIndex === window.visualIndex;
+    const audioEl = document.getElementById("audioPlayer");
+
+    // First interaction: if nothing is playing, start playback of the clicked card's station and center without opening modal
+    const isPlaying = audioEl && !audioEl.paused && !!audioEl.src;
+    if (!firstInteractionHandled && (!audioEl || !isPlaying)) {
+      const dataIndex = parseInt(card.dataset.index);
+      const numStations = radioStations.length;
+      const stationIdx =
+        ((dataIndex % numStations) + numStations) % numStations;
+      const station = radioStations[stationIdx];
+      if (station && typeof playStaticThenStation === "function") {
+        playStaticThenStation(station);
+        lastPlayedStationId = station.id;
+      }
+      firstInteractionHandled = true;
+      // Center the clicked card but do not allow modal open on this click
+      focusStationByCard(card, false);
+      return;
+    }
+
+    // Normal behavior thereafter
     focusStationByCard(card, isCentered);
   });
 
@@ -729,6 +850,7 @@ function updateGameLogo(game) {
       gameLogo.src = newSrc;
       gameLogo.alt = game.toUpperCase() + " Logo";
       gameLogo.style.opacity = "1";
+      ensureVisualCentering(gameLogo);
     }, 150);
   }
 }
