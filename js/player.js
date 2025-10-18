@@ -137,6 +137,18 @@ function setupModal() {
 
 // Open radio station modal
 function playStationBackground(station) {
+  // If already playing this station and audio is not paused, skip reload/seek
+  if (
+    currentStation &&
+    currentStation.id === station.id &&
+    audioPlayer &&
+    !audioPlayer.paused &&
+    audioPlayer.src === station.audioFile
+  ) {
+    // Already playing, just show modal
+    return;
+  }
+
   currentStation = station;
   // Theme is now applied by carousel when centered; keep localStorage updated
   try {
@@ -148,7 +160,6 @@ function playStationBackground(station) {
   audioPlayer.preload = "metadata";
   audioPlayer.src = station.audioFile;
   audioPlayer.load();
-  // Spinner logic removed
   // Sync and play
   synchronizePlayback(station);
 
