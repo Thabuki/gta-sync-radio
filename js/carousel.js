@@ -375,6 +375,7 @@ function setupCarouselControls() {
     } else {
       moveToPrevious();
     }
+    // Playback will be handled by carousel transition logic
   });
 
   // Keyboard navigation: handle only arrows and Enter here

@@ -313,8 +313,11 @@ function playStationBackground(station) {
     }
   }, 1000);
 
-  // Show now playing toast
-  showNowPlayingToast(station);
+  // Only show now playing toast when audio is actually playing
+  audioPlayer.addEventListener("play", function toastOnPlay() {
+    showNowPlayingToast(station);
+    audioPlayer.removeEventListener("play", toastOnPlay);
+  });
 }
 
 // Note: audio source is managed per-station; we avoid extra listeners here
