@@ -398,15 +398,36 @@ function playStationBackground(
     }, 1000);
 
   // Only show now playing toast when audio is actually playing
-  PlayerState.audioPlayer.addEventListener(
-    "play",
-    function toastOnPlay() {
-      showNowPlayingToast(station);
+  // Ensure we don't keep an old handler pointing to the previous station
+  if (PlayerState._toastOnPlayHandler) {
+    try {
       PlayerState.audioPlayer.removeEventListener(
         "play",
-        toastOnPlay
+        PlayerState._toastOnPlayHandler
       );
-    }
+    } catch {}
+    PlayerState._toastOnPlayHandler =
+      null;
+  }
+  PlayerState._toastOnPlayHandler =
+    function toastOnPlay() {
+      const st =
+        PlayerState.currentStation ||
+        station;
+      showNowPlayingToast(st);
+      try {
+        PlayerState.audioPlayer.removeEventListener(
+          "play",
+          PlayerState._toastOnPlayHandler
+        );
+      } catch {}
+      PlayerState._toastOnPlayHandler =
+        null;
+    };
+  PlayerState.audioPlayer.addEventListener(
+    "play",
+    PlayerState._toastOnPlayHandler,
+    { once: true }
   );
 
   // Update Media Session API for iOS lock screen controls and background playback

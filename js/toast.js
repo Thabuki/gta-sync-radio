@@ -1,5 +1,11 @@
 // Toast notification module
 function showNowPlayingToast(station) {
+  const activeStation =
+    (typeof PlayerState !==
+      "undefined" &&
+      PlayerState.currentStation) ||
+    station;
+  if (!activeStation) return;
   let toast = document.getElementById(
     "nowPlayingToast"
   );
@@ -22,35 +28,31 @@ function showNowPlayingToast(station) {
       <img id="toastLogo" alt="Station Logo" />
       <div class="toast-text">
         <strong id="toastTitle">Now Playing</strong>
-        <span id="toastStation"></span>
         <span id="toastTrack"></span>
       </div>
     `;
     document.body.appendChild(toast);
   }
+
   const logo = document.getElementById(
     "toastLogo"
   );
   const title = document.getElementById(
     "toastTitle"
   );
-  const stationSpan =
-    document.getElementById(
-      "toastStation"
-    );
   const trackSpan =
     document.getElementById(
       "toastTrack"
     );
 
-  logo.src = station.logo;
+  logo.src = activeStation.logo;
   title.textContent = "Now Playing";
-  stationSpan.textContent =
-    station.name;
+  // Station name omitted in toast per design; logo is sufficient
 
   // Get and display current track
-  const currentTrack =
-    getCurrentTrack(station);
+  const currentTrack = getCurrentTrack(
+    activeStation
+  );
   if (currentTrack && trackSpan) {
     trackSpan.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
   } else if (trackSpan) {
@@ -77,6 +79,12 @@ function showNowPlayingToastForTrack(
   station,
   track
 ) {
+  const activeStation =
+    (typeof PlayerState !==
+      "undefined" &&
+      PlayerState.currentStation) ||
+    station;
+  if (!activeStation) return;
   let toast = document.getElementById(
     "nowPlayingToast"
   );
@@ -99,31 +107,26 @@ function showNowPlayingToastForTrack(
       <img id="toastLogo" alt="Station Logo" />
       <div class="toast-text">
         <strong id="toastTitle">Now Playing</strong>
-        <span id="toastStation"></span>
         <span id="toastTrack"></span>
       </div>
     `;
     document.body.appendChild(toast);
   }
+
   const logo = document.getElementById(
     "toastLogo"
   );
   const title = document.getElementById(
     "toastTitle"
   );
-  const stationSpan =
-    document.getElementById(
-      "toastStation"
-    );
   const trackSpan =
     document.getElementById(
       "toastTrack"
     );
 
-  logo.src = station.logo;
+  logo.src = activeStation.logo;
   title.textContent = "Now Playing";
-  stationSpan.textContent =
-    station.name;
+  // Station name omitted in toast per design; logo is sufficient
 
   if (track && trackSpan) {
     trackSpan.textContent = `${track.artist} - ${track.title}`;

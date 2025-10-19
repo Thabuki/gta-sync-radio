@@ -54,10 +54,7 @@ function getCurrentTrack(station) {
 }
 
 function renderTracklist(tracks) {
-  const {
-    audioPlayer,
-    currentStation,
-  } = PlayerState;
+  const { audioPlayer } = PlayerState;
   const tracklistContent =
     document.getElementById(
       "tracklistContent"
@@ -93,8 +90,9 @@ function renderTracklist(tracks) {
     // TODO[cleanup]: Remove this overlay once San Andreas track start times are finalized
     // and the skip-to-music feature is fully enabled for GTASA.
     const isSA =
-      currentStation &&
-      currentStation.game === "gtasa";
+      PlayerState.currentStation &&
+      PlayerState.currentStation
+        .game === "gtasa";
     if (isSA && hasStart) {
       li.classList.add(
         "sa-under-construction"
@@ -130,143 +128,90 @@ function renderTracklist(tracks) {
       li.addEventListener(
         "click",
         () => {
-          if (
-            audioPlayer &&
-            currentStation
-          ) {
-            audioPlayer.currentTime =
+          const ap =
+            PlayerState.audioPlayer;
+          const st =
+            PlayerState.currentStation;
+          if (ap && st) {
+            ap.currentTime =
               trackStartTime;
             // Mark as out of sync since user manually seeked
             PlayerState.isSynced = false;
             PlayerState.userDesynced = true;
             updateResyncButtonState();
             // Show now playing toast for the clicked track, even if it's the same as before
-            showNowPlayingToastForTrack(
-              currentStation,
-              track
-            );
+            if (
+              typeof showNowPlayingToastForTrack ===
+              "function"
+            ) {
+              showNowPlayingToastForTrack(
+                st,
+                track
+              );
+            }
           }
         }
       );
     }
-    // Track last shown track index for toast
-    let lastToastTrackIndex = -1;
-    // Show toast when a new track starts
-    function handleTrackChangeToast() {
-      if (
-        !currentStation ||
-        !audioPlayer
-      )
-        return;
-      const currentTrack =
-        getCurrentTrack(currentStation);
-      if (!currentTrack) return;
-      const idx =
-        currentStation.tracks.findIndex(
-          (t) => t === currentTrack
-        );
-      if (idx !== lastToastTrackIndex) {
-        showNowPlayingToastForTrack(
-          currentStation,
-          currentTrack
-        );
-        lastToastTrackIndex = idx;
-      }
-    }
-    // Listen for timeupdate to detect track changes
-    if (audioPlayer) {
-      audioPlayer.addEventListener(
-        "timeupdate",
-        handleTrackChangeToast
-      );
-    }
-    // Reset on station change
-    window.addEventListener(
-      "stationchange",
-      () => {
-        lastToastTrackIndex = -1;
-      }
-    );
-    // Show now playing toast for a specific track (used for click and timeupdate)
-    function showNowPlayingToastForTrack(
-      station,
-      track
-    ) {
-      let toast =
-        document.getElementById(
-          "nowPlayingToast"
-        );
-      if (!toast) {
-        // Create toast dynamically if not present in DOM
-        toast =
-          document.createElement("div");
-        toast.id = "nowPlayingToast";
-        toast.className =
-          "now-playing-toast";
-        toast.setAttribute(
-          "aria-live",
-          "polite"
-        );
-        toast.setAttribute(
-          "aria-atomic",
-          "true"
-        );
-        toast.innerHTML = `
-      <img id="toastLogo" alt="Station Logo" />
-      <div class="toast-text">
-        <strong id="toastTitle">Now Playing</strong>
-        <span id="toastStation"></span>
-        <span id="toastTrack"></span>
-      </div>
-    `;
-        document.body.appendChild(
-          toast
-        );
-      }
-      const logo =
-        document.getElementById(
-          "toastLogo"
-        );
-      const title =
-        document.getElementById(
-          "toastTitle"
-        );
-      const stationSpan =
-        document.getElementById(
-          "toastStation"
-        );
-      const trackSpan =
-        document.getElementById(
-          "toastTrack"
-        );
-
-      logo.src = station.logo;
-      title.textContent = "Now Playing";
-      stationSpan.textContent =
-        station.name;
-
-      if (track && trackSpan) {
-        trackSpan.textContent = `${track.artist} - ${track.title}`;
-      } else if (trackSpan) {
-        trackSpan.textContent = "";
-      }
-
-      toast.hidden = false;
-      toast.classList.add("show");
-      if (PlayerState.toastTimer)
-        clearTimeout(
-          PlayerState.toastTimer
-        );
-      PlayerState.toastTimer =
-        setTimeout(() => {
-          toast.classList.remove(
-            "show"
-          );
-        }, 2500);
-    }
-
     tracklistContent.appendChild(li);
   });
+
+  // Track change toast handling: use a single listener that references live PlayerState
+  let lastToastTrackIndex = -1;
+
+  function handleTrackChangeToast() {
+    const st =
+      PlayerState.currentStation;
+    const ap = PlayerState.audioPlayer;
+    if (!st || !ap) return;
+    const currentTrack =
+      getCurrentTrack(st);
+    if (!currentTrack) return;
+    const idx = st.tracks.findIndex(
+      (t) => t === currentTrack
+    );
+    if (idx !== lastToastTrackIndex) {
+      if (
+        typeof showNowPlayingToastForTrack ===
+        "function"
+      ) {
+        showNowPlayingToastForTrack(
+          st,
+          currentTrack
+        );
+      }
+      lastToastTrackIndex = idx;
+    }
+  }
+
+  // Remove previous timeupdate handler if any to avoid duplicates
+  if (
+    PlayerState._tracklistTimeupdateHandler &&
+    PlayerState.audioPlayer
+  ) {
+    try {
+      PlayerState.audioPlayer.removeEventListener(
+        "timeupdate",
+        PlayerState._tracklistTimeupdateHandler
+      );
+    } catch {}
+  }
+  PlayerState._tracklistTimeupdateHandler =
+    handleTrackChangeToast;
+  if (PlayerState.audioPlayer) {
+    PlayerState.audioPlayer.addEventListener(
+      "timeupdate",
+      PlayerState._tracklistTimeupdateHandler
+    );
+  }
+
+  // Reset index when station changes
+  window.addEventListener(
+    "stationchange",
+    () => {
+      lastToastTrackIndex = -1;
+    }
+  );
 }
 
 window.getCurrentTrack =
