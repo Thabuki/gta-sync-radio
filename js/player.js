@@ -864,6 +864,20 @@ function renderTracklist(tracks) {
     text.textContent = `${track.artist} - ${track.title}`;
     li.appendChild(text);
 
+  // If this is a San Andreas station, show an UNDER CONSTRUCTION overlay on clickable tracks
+  // TODO[cleanup]: Remove this overlay once San Andreas track start times are finalized
+  // and the skip-to-music feature is fully enabled for GTASA.
+    const isSA = currentStation && currentStation.game === "gtasa";
+    if (isSA && hasStart) {
+      li.classList.add("sa-under-construction");
+      const uc = document.createElement("span");
+      uc.className = "uc-overlay";
+      uc.textContent = "UNDER CONSTRUCTION";
+      uc.setAttribute("aria-hidden", "true");
+      li.appendChild(uc);
+      li.title = "Skip to music is under construction for San Andreas";
+    }
+
     // Add a subtle Talk Show badge for non-clickable items
     if (!hasStart) {
       const badge =
