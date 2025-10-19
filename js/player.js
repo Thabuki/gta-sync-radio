@@ -323,6 +323,16 @@ function playStationBackground(
   PlayerState.currentStation = station;
   // Reset manual desync when switching stations
   PlayerState.userDesynced = false;
+  // Notify listeners of station change (tracklist highlight, etc.)
+  try {
+    window.dispatchEvent(
+      new CustomEvent("stationchange", {
+        detail: {
+          stationId: station.id,
+        },
+      })
+    );
+  } catch {}
   // Theme is now applied by carousel when centered; keep localStorage updated
   try {
     localStorage.setItem(
