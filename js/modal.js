@@ -55,11 +55,12 @@ function openRadio(station) {
     "modalGenre"
   ).textContent = station.genre || "";
 
+  // Start background playback first so PlayerState.currentStation is set
+  // and audio element is ready before rendering the tracklist (enables immediate highlight)
+  playStationBackground(station);
+
   // Render tracklist
   renderTracklist(station.tracks);
-
-  // Start background playback (theme already handled by carousel)
-  playStationBackground(station);
 
   // Show modal
   modal.style.display = "block";

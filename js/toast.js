@@ -53,10 +53,23 @@ function showNowPlayingToast(station) {
   const currentTrack = getCurrentTrack(
     activeStation
   );
-  if (currentTrack && trackSpan) {
-    trackSpan.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
-  } else if (trackSpan) {
-    trackSpan.textContent = "";
+  if (trackSpan) {
+    if (
+      currentTrack &&
+      currentTrack.artist &&
+      currentTrack.title
+    ) {
+      trackSpan.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
+    } else if (
+      activeStation &&
+      activeStation.genre &&
+      /talk/i.test(activeStation.genre)
+    ) {
+      trackSpan.textContent =
+        "Talk Show";
+    } else {
+      trackSpan.textContent = "";
+    }
   }
 
   toast.hidden = false;
@@ -128,10 +141,23 @@ function showNowPlayingToastForTrack(
   title.textContent = "Now Playing";
   // Station name omitted in toast per design; logo is sufficient
 
-  if (track && trackSpan) {
-    trackSpan.textContent = `${track.artist} - ${track.title}`;
-  } else if (trackSpan) {
-    trackSpan.textContent = "";
+  if (trackSpan) {
+    if (
+      track &&
+      track.artist &&
+      track.title
+    ) {
+      trackSpan.textContent = `${track.artist} - ${track.title}`;
+    } else if (
+      activeStation &&
+      activeStation.genre &&
+      /talk/i.test(activeStation.genre)
+    ) {
+      trackSpan.textContent =
+        "Talk Show";
+    } else {
+      trackSpan.textContent = "";
+    }
   }
 
   toast.hidden = false;

@@ -276,9 +276,11 @@ audio::-webkit-media-controls-panel {
   transition: background 0.2s,
     color 0.2s;
   cursor: pointer;
+  position: relative;
 }
 
-.tracklist li:hover {
+.tracklist
+  li:not(.non-clickable):hover {
   background: var(--accent);
   color: white;
 }
@@ -287,9 +289,30 @@ audio::-webkit-media-controls-panel {
 .tracklist li.non-clickable {
   cursor: default;
 }
-.tracklist li.non-clickable:hover {
+.tracklist
+  li.non-clickable:not(.playing):hover {
   background: inherit;
   color: inherit;
+}
+
+/* Mobile polish */
+@media (max-width: 480px) {
+  .tracklist li.playing::after {
+    right: 10px;
+    border-left-width: 8px;
+    border-top-width: 5px;
+    border-bottom-width: 5px;
+  }
+}
+
+/* A11y helper */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }
 
 /* Small badge for non-clickable talk items */
@@ -313,10 +336,65 @@ audio::-webkit-media-controls-panel {
   font-weight: bold;
 }
 
-.tracklist li.playing:hover {
+/* Preserve playing background for non-clickable (talk) rows on hover */
+.tracklist
+  li.playing.non-clickable:hover {
+  background: #f0f4ff;
+  color: inherit;
+  border-left-color: #667eea;
+}
+
+/* Right-side play indicator following theme color */
+.tracklist li.playing::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 10px solid var(--accent);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  opacity: 0.95;
+  filter: drop-shadow(
+    0 0 1px rgba(0, 0, 0, 0.15)
+  );
+  animation: playNudge 1.6s ease-in-out
+    infinite;
+  transform: translateY(-50%);
+}
+
+.tracklist
+  li.playing:not(.non-clickable):hover {
   background: var(--accent);
   color: white;
   border-left-color: white;
+}
+.tracklist
+  li.playing:not(
+    .non-clickable
+  ):hover::after {
+  border-left-color: var(
+    --text-on-accent
+  );
+}
+
+@keyframes playNudge {
+  0% {
+    transform: translateY(-50%)
+      translateX(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-50%)
+      translateX(2px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50%)
+      translateX(0);
+    opacity: 0.9;
+  }
 }
 
 .tracklist li.commercial-track {
