@@ -3,6 +3,8 @@ let currentStation = null;
 let audioPlayer = null;
 let syncInterval = null;
 let isSynced = false;
+// Tracks if the user has intentionally left synced mode (manual seek/click)
+let userDesynced = false;
 
 // Initialize player
 function initPlayer() {
@@ -89,6 +91,7 @@ function initPlayer() {
     () => {
       if (currentStation && isSynced) {
         isSynced = false;
+        userDesynced = true;
         updateResyncButtonState();
       }
     }
@@ -104,6 +107,7 @@ function initPlayer() {
         !audioPlayer.ended
       ) {
         isSynced = false;
+        userDesynced = true;
         updateResyncButtonState();
       }
     }
@@ -429,6 +433,7 @@ function setupResyncButton() {
         resyncBtn.textContent =
           "✓ Synced!";
         isSynced = true;
+        userDesynced = false;
       }
     }
   );
@@ -476,15 +481,52 @@ function setupModal() {
 function playStationBackground(
   station
 ) {
+  // If user intentionally desynced, avoid any implicit re-sync on reopen for the same station/source
+  try {
+    if (userDesynced && audioPlayer) {
+      const absSrc = new URL(
+        station.audioFile,
+        location.href
+      ).href;
+      const sameSource =
+        audioPlayer.src &&
+        audioPlayer.src === absSrc;
+      const lastId =
+        localStorage.getItem(
+          "lastStationId"
+        );
+      const sameById =
+        lastId && lastId === station.id;
+      if (sameSource || sameById) {
+        if (
+          audioPlayer.paused &&
+          !audioPlayer.ended
+        ) {
+          audioPlayer.play();
+        }
+        // Do not change src or seek; preserve manual position
+        return;
+      }
+    }
+  } catch {}
+
   // If already playing this station and audio is not paused, skip reload/seek
   if (
     currentStation &&
-    currentStation.id === station.id &&
-    audioPlayer &&
-    audioPlayer.src ===
-      station.audioFile
+    currentStation.id === station.id
   ) {
     // Already playing this station
+    // Respect manual de-sync: if user has intentionally de-synced (isSynced === false), do not re-sync on reopen
+    if (!isSynced || userDesynced) {
+      if (
+        audioPlayer.paused &&
+        !audioPlayer.ended
+      ) {
+        audioPlayer.play();
+      }
+      return; // keep currentTime as-is
+    }
+
     const dur = audioPlayer.duration;
     if (isFinite(dur) && dur > 0) {
       const now = Date.now() / 1000;
@@ -504,12 +546,14 @@ function playStationBackground(
         return;
       }
     }
-    // Otherwise, seek to correct position
+    // Otherwise, seek to correct position (only when we consider ourselves synced)
     synchronizePlayback(station);
     return;
   }
 
   currentStation = station;
+  // Reset manual desync when switching stations
+  userDesynced = false;
   // Theme is now applied by carousel when centered; keep localStorage updated
   try {
     localStorage.setItem(
@@ -543,10 +587,12 @@ function playStationBackground(
   syncInterval = setInterval(() => {
     updateResyncButtonState();
     // Auto-correct drift: if we're out of sync but playing, gently nudge playback
+    // Only perform drift correction when we are in synced mode (avoid overriding user manual seeking)
     if (
       currentStation &&
       !audioPlayer.paused &&
-      !isSynced
+      isSynced &&
+      !userDesynced
     ) {
       const drift = checkSyncDrift();
       // If drift is between 0.5 and 2 seconds, do a micro-correction
@@ -913,6 +959,7 @@ function renderTracklist(tracks) {
               trackStartTime;
             // Mark as out of sync since user manually seeked
             isSynced = false;
+            userDesynced = true;
             updateResyncButtonState();
             // Show now playing toast for the clicked track, even if it's the same as before
             showNowPlayingToastForTrack(
@@ -1138,6 +1185,10 @@ function updateResyncButtonState() {
 
 // Synchronize playback based on UTC time (global sync across all timezones)
 function synchronizePlayback(station) {
+  // Respect manual mode: if user intentionally desynced, do not perform any sync
+  if (userDesynced) {
+    return;
+  }
   const seekToExpected = () => {
     const dur = audioPlayer.duration;
     if (!isFinite(dur) || dur <= 0)
