@@ -481,7 +481,7 @@ function setupModal() {
 function playStationBackground(
   station
 ) {
-  // If user intentionally desynced, avoid any implicit re-sync on reopen for the same station/source
+  // If user intentionally desynced, avoid any implicit re-sync on reopen for the same currently loaded station/source
   try {
     if (userDesynced && audioPlayer) {
       const absSrc = new URL(
@@ -491,13 +491,11 @@ function playStationBackground(
       const sameSource =
         audioPlayer.src &&
         audioPlayer.src === absSrc;
-      const lastId =
-        localStorage.getItem(
-          "lastStationId"
-        );
-      const sameById =
-        lastId && lastId === station.id;
-      if (sameSource || sameById) {
+      const sameCurrent =
+        currentStation &&
+        currentStation.id ===
+          station.id;
+      if (sameSource || sameCurrent) {
         if (
           audioPlayer.paused &&
           !audioPlayer.ended
@@ -577,6 +575,12 @@ function playStationBackground(
 
   // Lazy-load: only set src when about to play
   audioPlayer.preload = "metadata";
+  // Stop any previous playback and clear src before switching to a new station
+  try {
+    audioPlayer.pause();
+  } catch {}
+  audioPlayer.removeAttribute("src");
+  audioPlayer.load();
   audioPlayer.src = station.audioFile;
   audioPlayer.load();
   // Sync and play
