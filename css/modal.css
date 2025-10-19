@@ -75,7 +75,7 @@
   padding: 8px;
   background: #ffffff;
   /* Assets are trimmed; no extra horizontal shift */
-  transform: none;
+  transform: translateX(var(--logo-manual-shift, 0px));
 }
 
 .player-info h2 {

@@ -84,13 +84,13 @@
   margin-left: auto;
   margin-right: auto; /* ensure perfect centering within card */
   /* Assets are trimmed; no extra horizontal shift */
-  transform: none;
+  transform: translateX(var(--logo-manual-shift, 0px));
   transition: transform 0.2s ease;
 }
 
 /* Subtle hint for active selection: scale logo slightly */
 .radio-card.active .radio-logo {
-  transform: scale(1.05);
+  transform: translateX(var(--logo-manual-shift, 0px)) scale(1.05);
 }
 
 /* Larger screens: slightly larger logos and wider gaps */

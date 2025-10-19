@@ -63,6 +63,8 @@
   --scrollbar-track: #f1f1f1;
   --scrollbar-thumb: var(--accent);
   --scrollbar-thumb-hover: #357abd; /* a darker blue for hover */
+  /* Manual global bias for logo horizontal alignment (negative = left); couldn't for the life of me figure out how to align it automatically */
+  --logo-manual-shift: -20px;
 }
 
 /* Future themes can override these vars by applying a class on <body> */
