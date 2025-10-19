@@ -16,7 +16,7 @@ Globally synchronized radio player inspired by GTA III, Vice City, and San Andre
 
 - **Sync drift**: There may be a drift of approximately 20 seconds between users due to network latency, buffer delays, and browser-specific playback timing. The Re-sync button can help minimize this drift.
 
-- **Logo centering offset**: Station and modal logos are intentionally nudged slightly to the left using a small global CSS offset. This provides a consistent visual center across mixed assets and aspect ratios, which proved tricky to solve purely algorithmically.
+- **Logo centering offset**: Station and modal logos are intentionally nudged slightly to the left using hard-coded CSS offsets to achieve consistent visual centering across mixed assets and aspect ratios. Different values are used for desktop and mobile viewports, and the alignment may appear imperfect on intermediate or uncommon screen sizes.
 
 ## Usage
 

@@ -168,6 +168,11 @@ body::-webkit-scrollbar-thumb:hover {
 
 /* Mobile: align wrapper with viewport to keep carousel centered */
 @media (max-width: 600px) {
+  :root {
+    /* Override logo manual shift for mobile devices */
+    --logo-manual-shift: -12px;
+  }
+  
   body {
     padding: 0; /* avoid vw vs wrapper width mismatch */
   }
