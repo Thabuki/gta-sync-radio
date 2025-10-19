@@ -72,6 +72,24 @@ function initPlayer() {
       updateResyncButtonState();
     }
   });
+
+  // iOS Safari: prevent audio pause when page is backgrounded/minimized
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      // Page is backgrounded; try to keep audio playing
+      if (audioPlayer && !audioPlayer.paused && currentStation) {
+        // Force resume if Safari paused it
+        audioPlayer.play().catch(() => {
+          // Silently ignore if browser blocks autoplay
+        });
+      }
+    } else {
+      // Page is visible again; ensure playback continues
+      if (audioPlayer && currentStation && audioPlayer.paused) {
+        audioPlayer.play().catch(() => {});
+      }
+    }
+  });
 }
 
 // Visualizer setup
@@ -318,6 +336,40 @@ function playStationBackground(station) {
     showNowPlayingToast(station);
     audioPlayer.removeEventListener("play", toastOnPlay);
   });
+
+  // Update Media Session API for iOS lock screen controls and background playback
+  updateMediaSession(station);
+}
+
+// Update Media Session API for background playback on iOS
+function updateMediaSession(station) {
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: station.name,
+      artist: `DJ: ${station.dj}`,
+      album: station.genre || "GTA Radio",
+      artwork: [
+        { src: station.logo, sizes: "512x512", type: "image/png" },
+        { src: station.logo, sizes: "256x256", type: "image/png" },
+        { src: station.logo, sizes: "128x128", type: "image/png" },
+      ],
+    });
+
+    // Set up playback controls for lock screen
+    navigator.mediaSession.setActionHandler("play", () => {
+      if (audioPlayer) audioPlayer.play();
+    });
+
+    navigator.mediaSession.setActionHandler("pause", () => {
+      if (audioPlayer) audioPlayer.pause();
+    });
+
+    // Disable seek handlers since we're synced to epoch time
+    navigator.mediaSession.setActionHandler("seekbackward", null);
+    navigator.mediaSession.setActionHandler("seekforward", null);
+    navigator.mediaSession.setActionHandler("previoustrack", null);
+    navigator.mediaSession.setActionHandler("nexttrack", null);
+  }
 }
 
 // Note: audio source is managed per-station; we avoid extra listeners here

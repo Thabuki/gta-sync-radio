@@ -113,6 +113,14 @@ audio::-webkit-media-controls-playback-speed-button {
   pointer-events: none !important;
 }
 
+/* iOS Safari: additional selectors to hide volume and playback rate */
+audio::-webkit-media-controls-volume-control-container,
+audio::-webkit-media-controls-playback-rate-control,
+audio::-webkit-media-controls-time-remaining-display {
+  display: none !important;
+  -webkit-appearance: none !important;
+}
+
 audio::-moz-media-controls-volume-control {
   display: none !important;
 }
