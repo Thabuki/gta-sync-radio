@@ -274,7 +274,7 @@ const viceCityStations = [
       {
         artist: "Mtume",
         title: "Juicy Fruit",
-        start: 2959,
+        start: 2964,
       },
       {
         artist: "Kool & the Gang",
@@ -310,81 +310,81 @@ const viceCityStations = [
         start: 186,
       },
       {
-        artist: "Ozzy Osbourne",
-        title: "Bark at the Moon",
-        start: 509,
-      },
-      {
         artist: "Quiet Riot",
         title: "Cum On Feel the Noize",
-        start: 865,
+        start: 509,
       },
       {
         artist: "The Cult",
         title: "She Sells Sanctuary",
+        start: 865,
+      },
+      {
+        artist: "Ozzy Osbourne",
+        title: "Bark at the Moon",
         start: 1211,
+      },
+      {
+        artist: "Love Fist",
+        title: "Dangerous Bastard",
+        start: 1548,
+      },
+      {
+        artist: "Iron Maiden",
+        title: "2 Minutes to Midnight",
+        start: 1789,
+      },
+      {
+        artist: "Loverboy",
+        title:
+          "Working for the Weekend",
+        start: 2249,
+      },
+      {
+        artist: "Alcatrazz",
+        title: "God Blessed Video",
+        start: 2524,
+      },
+      {
+        artist: "Tesla",
+        title: "Cumin' Atcha Live",
+        start: 2735,
+      },
+      {
+        artist: "Autograph",
+        title: "Turn Up the Radio",
+        start: 2956,
+      },
+      {
+        artist: "Megadeth",
+        title: "Peace Sells",
+        start: 3220,
+      },
+      {
+        artist: "Anthrax",
+        title: "Madhouse",
+        start: 3513,
+      },
+      {
+        artist: "Slayer",
+        title: "Raining Blood",
+        start: 3756,
       },
       {
         artist: "Judas Priest",
         title:
           "You've Got Another Thing Comin'",
-        start: 1548,
+        start: 3936,
       },
       {
         artist: "Love Fist",
-        title: "Dangerous Bastard",
-        start: 1789,
-      },
-      {
-        artist: "Autograph",
-        title: "Turn Up the Radio",
-        start: 2249,
-      },
-      {
-        artist: "Megadeth",
-        title: "Peace Sells",
-        start: 2524,
-      },
-      {
-        artist: "Anthrax",
-        title: "Madhouse",
-        start: 2737,
+        title: "Fist Fury",
+        start: 4225,
       },
       {
         artist: "David Lee Roth",
         title: "Yankee Rose",
-        start: 2954,
-      },
-      {
-        artist: "Alcatrazz",
-        title: "God Blessed Video",
-        start: 3220,
-      },
-      {
-        artist: "Ratt",
-        title: "Round and Round",
-        start: 3513,
-      },
-      {
-        artist: "Accept",
-        title:
-          "Too High to Get It Right",
-        start: 3753,
-      },
-      {
-        artist: "Iron Maiden",
-        title: "2 Minutes to Midnight",
-        start: 3956,
-      },
-      {
-        artist: "Slayer",
-        title: "Raining Blood",
-        start: 4225,
-      },
-      {
-        artist: "Tesla",
-        title: "Cumin' Atcha Live",
-        start: 4238,
+        start: 4418,
       },
     ],
   },
@@ -500,12 +500,12 @@ const viceCityStations = [
         artist: "Foreigner",
         title:
           "Waiting for a Girl Like You",
-        start: 0,
+        start: 8,
       },
       {
         artist: "Kate Bush",
         title: "Wow",
-        start: 329,
+        start: 330,
       },
       {
         artist: "Squeeze",
@@ -515,48 +515,48 @@ const viceCityStations = [
       {
         artist: "REO Speedwagon",
         title: "Keep On Loving You",
-        start: 893,
+        start: 847,
       },
       {
         artist: "Cutting Crew",
         title:
           "(I Just) Died in Your Arms",
-        start: 1102,
+        start: 1041,
       },
       {
         artist: "Roxy Music",
         title: "More Than This",
-        start: 1423,
+        start: 1291,
       },
       {
         artist: "Toto",
         title: "Africa",
-        start: 1687,
+        start: 1665,
       },
       {
         artist: "Mr. Mister",
         title: "Broken Wings",
-        start: 1963,
+        start: 1922,
       },
       {
         artist: "John Waite",
         title: "Missing You",
-        start: 2283,
-      },
-      {
-        artist: "Night Ranger",
-        title: "Sister Christian",
-        start: 2527,
-      },
-      {
-        artist: "Luther Vandross",
-        title: "Never Too Much",
-        start: 2804,
+        start: 2220,
       },
       {
         artist: "Jan Hammer",
         title: "Crockett's Theme",
-        start: 3083,
+        start: 2520,
+      },
+      {
+        artist: "Night Ranger",
+        title: "Sister Christian",
+        start: 2777,
+      },
+      {
+        artist: "Luther Vandross",
+        title: "Never Too Much",
+        start: 3179,
       },
     ],
   },
@@ -572,30 +572,30 @@ const viceCityStations = [
     tracks: [
       {
         artist:
-          "Frankie Goes to Hollywood",
+          "Frankie Goes To Hollywood",
         title: "Two Tribes",
         start: 7,
       },
       {
+        artist: "Sigue Sigue Sputnik",
+        title: "F1-11 Love Missile",
+        start: 283,
+      },
+      {
         artist: "Gary Numan",
         title: "Cars",
-        start: 282,
-      },
-      {
-        artist: "Blondie",
-        title: "Atomic",
         start: 492,
-      },
-      {
-        artist: "A Flock of Seagulls",
-        title: "I Ran (So Far Away)",
-        start: 686,
       },
       {
         artist: "The Human League",
         title:
-          "(Keep Feeling) Fascination",
-        start: 1017,
+          "(Keep feeling) Fascination",
+        start: 686,
+      },
+      {
+        artist: "Blondie",
+        title: "Atomic",
+        start: 1015,
       },
       {
         artist: "Nena",
@@ -604,53 +604,52 @@ const viceCityStations = [
       },
       {
         artist: "Kim Wilde",
-        title: "Kids in America",
+        title: "Kids In America",
         start: 1445,
       },
       {
-        artist: "Tears for Fears",
+        artist: "Tears For Fears",
         title: "Pale Shelter",
-        start: 1641,
+        start: 1638,
       },
       {
-        artist: "Thomas Dolby",
-        title: "Hyperactive!",
+        artist: "Corey Hart",
+        title: "Sunglasses At Night",
         start: 1942,
       },
       {
-        artist: "Animotion",
-        title: "Obsession",
-        start: 2161,
+        artist: "ABC",
+        title: "Poison Arrow",
+        start: 2162,
       },
       {
-        artist: "Spandau Ballet",
-        title: "Gold",
-        start: 2381,
-      },
-      {
-        artist: "Thompson Twins",
-        title: "Love on Your Side",
-        start: 2699,
+        artist: "A Flock of Seagulls",
+        title: "I Ran (So Far Away)",
+        start: 2362,
       },
       {
         artist: "The Psychedelic Furs",
         title: "Love My Way",
+        start: 2699,
+      },
+      {
+        artist: "Animotion",
+        title: "Obsession",
         start: 2892,
       },
       {
-        artist: "The Cure",
-        title: "A Forest",
-        start: 3188,
+        artist: "Spandau Bullet",
+        title: "Gold",
+        start: 3187,
       },
       {
-        artist:
-          "Frankie Goes to Hollywood",
-        title: "Relax",
-        start: 3418,
+        artist: "Thomas Dolby",
+        title: "Hyperactive!",
+        start: 3417,
       },
       {
-        artist: "Corey Hart",
-        title: "Sunglasses at Night",
+        artist: "Romeo Void",
+        title: "Never Say Never",
         start: 3666,
       },
     ],

@@ -377,28 +377,28 @@ const gtaiiiStations = [
       {
         artist: "Debbie Harry",
         title: "Rush Rush",
-        start: 0,
+        start: 3,
       },
       {
         artist: "Elizabeth Daily",
         title: "Shake It Up",
-        start: 193,
+        start: 244,
       },
       {
         artist: "Paul Engemann",
         title:
           "Scarface (Push It to the Limit)",
-        start: 396,
+        start: 526,
       },
       {
         artist: "Amy Holland",
         title: "She's On Fire",
-        start: 596,
+        start: 677,
       },
       {
         artist: "Elizabeth Daily",
         title: "I'm Hot Tonight",
-        start: 808,
+        start: 936,
       },
     ],
   },

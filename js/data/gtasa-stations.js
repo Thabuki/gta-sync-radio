@@ -16,60 +16,34 @@ const gtasaStations = [
         start: 0,
       },
       {
-        artist: "Big Daddy Kane",
-        title: "Warm It Up, Kane",
-        start: 0,
-      },
-      {
-        artist: "Spoonie Gee",
-        title: "The Godfather",
-        start: 0,
-      },
-      {
-        artist: "Masta Ace",
-        title: "Me and the Biz",
-        start: 0,
-      },
-      {
-        artist: "Slick Rick",
-        title: "Children's Story",
-        start: 0,
-      },
-      {
         artist: "Public Enemy",
         title: "Rebel Without a Pause",
-        start: 0,
+        start: 1176,
       },
       {
         artist: "Eric B. & Rakim",
         title: "I Know You Got Soul",
-        start: 0,
-      },
-      {
-        artist:
-          "Rob Base and DJ E-Z Rock",
-        title: "It Takes Two",
-        start: 0,
+        start: 1483,
       },
       {
         artist: "Gang Starr",
         title: "B.Y.S.",
-        start: 0,
+        start: 1706,
       },
       {
         artist: "Biz Markie",
         title: "The Vapors",
-        start: 0,
+        start: 1936,
       },
       {
         artist: "Brand Nubian",
         title: "Brand Nubian",
-        start: 0,
+        start: 2153,
       },
       {
         artist: "Ultramagnetic MCs",
         title: "Critical Beatdown",
-        start: 0,
+        start: 2568,
       },
     ],
   },
@@ -83,92 +57,92 @@ const gtasaStations = [
     audioFile: "media/gtasa/k-dst.mp3",
     tracks: [
       {
-        artist: "Foghat",
-        title: "Slow Ride",
-        start: 0,
-      },
-      {
-        artist:
-          "Creedence Clearwater Revival",
-        title: "Green River",
-        start: 0,
+        artist: "Grand Funk Railroad",
+        title: "Some Kind of Wonderful",
+        start: 9,
       },
       {
         artist: "Heart",
         title: "Barracuda",
-        start: 0,
-      },
-      {
-        artist: "Kiss",
-        title: "Strutter",
-        start: 0,
-      },
-      {
-        artist: "Toto",
-        title: "Hold the Line",
-        start: 0,
+        start: 196,
       },
       {
         artist: "Rod Stewart",
         title: "Young Turks",
-        start: 0,
+        start: 487,
       },
       {
         artist: "Tom Petty",
         title: "Runnin' Down a Dream",
-        start: 0,
-      },
-      {
-        artist: "Joe Cocker",
-        title: "Woman to Woman",
-        start: 0,
-      },
-      {
-        artist: "Humble Pie",
-        title: "Get Down to It",
-        start: 0,
-      },
-      {
-        artist: "Grand Funk Railroad",
-        title: "Some Kind of Wonderful",
-        start: 0,
-      },
-      {
-        artist: "Lynyrd Skynyrd",
-        title: "Free Bird",
-        start: 0,
-      },
-      {
-        artist: "America",
-        title: "A Horse with No Name",
-        start: 0,
-      },
-      {
-        artist: "The Who",
-        title: "Eminence Front",
-        start: 0,
-      },
-      {
-        artist: "Boston",
-        title: "Smokin'",
-        start: 0,
-      },
-      {
-        artist: "David Bowie",
-        title:
-          "Somebody Up There Likes Me",
-        start: 0,
+        start: 745,
       },
       {
         artist: "Eddie Money",
         title:
           "Two Tickets to Paradise",
-        start: 0,
+        start: 1026,
+      },
+      {
+        artist: "Foghat",
+        title: "Slow Ride",
+        start: 1248,
+      },
+      {
+        artist: "David Bowie",
+        title:
+          "Somebody Up There Likes Me",
+        start: 1437,
+      },
+      {
+        artist: "Toto",
+        title: "Hold the Line",
+        start: 1723,
       },
       {
         artist: "Billy Idol",
         title: "White Wedding",
-        start: 0,
+        start: 1944,
+      },
+      {
+        artist: "Kiss",
+        title: "Strutter",
+        start: 2244,
+      },
+      {
+        artist: "Boston",
+        title: "Smokin'",
+        start: 2429,
+      },
+      {
+        artist: "The Who",
+        title: "Eminence Front",
+        start: 2653,
+      },
+      {
+        artist: "Lynyrd Skynyrd",
+        title: "Free Bird",
+        start: 2946,
+      },
+      {
+        artist: "Joe Cocker",
+        title: "Woman to Woman",
+        start: 3296,
+      },
+      {
+        artist:
+          "Creedence Clearwater Revival",
+        title: "Green River",
+        start: 3589,
+      },
+      {
+        artist: "Humble Pie",
+        title: "Get Down to It",
+        start: 3734,
+      },
+      {
+        artist: "America",
+        title: "A Horse with No Name",
+        start: 3930,
       },
     ],
   },
