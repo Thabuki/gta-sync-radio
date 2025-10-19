@@ -239,8 +239,37 @@ audio::-webkit-media-controls-panel {
 .tracklist li {
   padding: 10px;
   border-bottom: 1px solid #eee;
-  transition: background 0.2s;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+
+.tracklist li:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* Non-clickable items (e.g., talk shows without start time) */
+.tracklist li.non-clickable {
   cursor: default;
+}
+.tracklist li.non-clickable:hover {
+  background: inherit;
+  color: inherit;
+}
+
+/* Small badge for non-clickable talk items */
+.tracklist li .track-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 10px;
+  vertical-align: middle;
+}
+.tracklist li .talk-badge {
+  background: #eef2f7;
+  color: #607d8b;
+  font-style: italic;
 }
 
 .tracklist li.playing {
@@ -250,7 +279,9 @@ audio::-webkit-media-controls-panel {
 }
 
 .tracklist li.playing:hover {
-  background: #e6f0ff;
+  background: var(--accent);
+  color: white;
+  border-left-color: white;
 }
 
 .tracklist li.commercial-track {

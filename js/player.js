@@ -374,6 +374,36 @@ function updateMediaSession(station) {
 
 // Note: audio source is managed per-station; we avoid extra listeners here
 
+// Get the currently playing track based on currentTime
+function getCurrentTrack(station) {
+  if (!station || !station.tracks || !audioPlayer) return null;
+
+  const currentTime = audioPlayer.currentTime;
+
+  // Find the track where currentTime falls between this track's start and the next track's start
+  for (let i = 0; i < station.tracks.length; i++) {
+    const track = station.tracks[i];
+    const trackStart = track.start !== undefined ? track.start : 0;
+
+    // Get next track's start time (or use audio duration as end if this is the last track)
+    let nextTrackStart;
+    if (i < station.tracks.length - 1) {
+      const nextTrack = station.tracks[i + 1];
+      nextTrackStart =
+        nextTrack.start !== undefined ? nextTrack.start : audioPlayer.duration;
+    } else {
+      nextTrackStart = audioPlayer.duration;
+    }
+
+    if (currentTime >= trackStart && currentTime < nextTrackStart) {
+      return track;
+    }
+  }
+
+  // If we're past all tracks or no match, return the last one
+  return station.tracks[station.tracks.length - 1] || null;
+}
+
 let toastTimer = null;
 function showNowPlayingToast(station) {
   let toast = document.getElementById("nowPlayingToast");
@@ -397,10 +427,20 @@ function showNowPlayingToast(station) {
   const logo = document.getElementById("toastLogo");
   const title = document.getElementById("toastTitle");
   const stationSpan = document.getElementById("toastStation");
-  // Remove trackSpan logic
+  const trackSpan = document.getElementById("toastTrack");
+
   logo.src = station.logo;
   title.textContent = "Now Playing";
   stationSpan.textContent = station.name;
+
+  // Get and display current track
+  const currentTrack = getCurrentTrack(station);
+  if (currentTrack && trackSpan) {
+    trackSpan.textContent = `${currentTrack.artist} - ${currentTrack.title}`;
+  } else if (trackSpan) {
+    trackSpan.textContent = "";
+  }
+
   toast.hidden = false;
   // Animate in
   toast.classList.add("show");
@@ -460,20 +500,43 @@ function renderTracklist(tracks) {
   tracks.forEach((track, index) => {
     const li = document.createElement("li");
     li.id = `track-${index}`;
+    // Determine if this item should be interactive
+    const hasStart = track.start !== undefined && track.start !== null;
+    if (!hasStart) {
+      li.classList.add("non-clickable");
+    }
+
     // Add special styling for commercials
     if (track.isCommercial) {
       li.classList.add("commercial-track");
     }
-    // Embed Spotify link into the track title text
-    const a = document.createElement("a");
-    a.href = `https://open.spotify.com/search/${encodeURIComponent(
-      `${track.artist} ${track.title}`
-    )}`;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.textContent = `${track.artist} - ${track.title}`;
-    li.appendChild(a);
-    // Remove clickable logic
+
+    // Display track text
+    const text = document.createElement("span");
+    text.textContent = `${track.artist} - ${track.title}`;
+    li.appendChild(text);
+
+    // Add a subtle Talk Show badge for non-clickable items
+    if (!hasStart) {
+      const badge = document.createElement("span");
+      badge.className = "track-badge talk-badge";
+      badge.textContent = "Talk Show";
+      li.appendChild(badge);
+    }
+
+    // Only wire clicks when a start time exists
+    if (hasStart) {
+      const trackStartTime = track.start;
+      li.addEventListener("click", () => {
+        if (audioPlayer && currentStation) {
+          audioPlayer.currentTime = trackStartTime;
+          // Mark as out of sync since user manually seeked
+          isSynced = false;
+          updateResyncButtonState();
+        }
+      });
+    }
+
     tracklistContent.appendChild(li);
   });
 }
