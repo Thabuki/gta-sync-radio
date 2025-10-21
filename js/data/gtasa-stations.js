@@ -13,12 +13,32 @@ const gtasaStations = [
       {
         artist: "Kool G Rap & DJ Polo",
         title: "Road to the Riches",
-        start: 0,
+        start: 26,
+      },
+      {
+        artist: "Big Daddy Kane",
+        title: "Warm It Up, Kane",
+        start: 268,
+      },
+      {
+        artist: "Spoonie Gee",
+        title: "The Godfather",
+        start: 480,
+      },
+      {
+        artist: "Masta Ace",
+        title: "Me and the Biz",
+        start: 706,
+      },
+      {
+        artist: "Slick Rick",
+        title: "Children's Story",
+        start: 936,
       },
       {
         artist: "Public Enemy",
         title: "Rebel Without a Pause",
-        start: 1176,
+        start: 1190,
       },
       {
         artist: "Eric B. & Rakim",
@@ -26,24 +46,30 @@ const gtasaStations = [
         start: 1483,
       },
       {
+        artist:
+          "Rob Base & DJ E-Z Rock",
+        title: "It Takes Two",
+        start: 1705,
+      },
+      {
         artist: "Gang Starr",
         title: "B.Y.S.",
-        start: 1706,
+        start: 1949,
       },
       {
         artist: "Biz Markie",
-        title: "The Vapors",
-        start: 1936,
+        title: "Vapors",
+        start: 2126,
       },
       {
         artist: "Brand Nubian",
         title: "Brand Nubian",
-        start: 2153,
+        start: 2373,
       },
       {
-        artist: "Ultramagnetic MCs",
+        artist: "Ultramagnetic MC's",
         title: "Critical Beatdown",
-        start: 2568,
+        start: 2608,
       },
     ],
   },
@@ -57,92 +83,92 @@ const gtasaStations = [
     audioFile: "media/gtasa/k-dst.mp3",
     tracks: [
       {
-        artist: "Grand Funk Railroad",
-        title: "Some Kind of Wonderful",
-        start: 9,
-      },
-      {
-        artist: "Heart",
-        title: "Barracuda",
-        start: 196,
-      },
-      {
-        artist: "Rod Stewart",
-        title: "Young Turks",
-        start: 487,
-      },
-      {
-        artist: "Tom Petty",
-        title: "Runnin' Down a Dream",
-        start: 745,
-      },
-      {
-        artist: "Eddie Money",
-        title:
-          "Two Tickets to Paradise",
-        start: 1026,
-      },
-      {
         artist: "Foghat",
         title: "Slow Ride",
-        start: 1248,
-      },
-      {
-        artist: "David Bowie",
-        title:
-          "Somebody Up There Likes Me",
-        start: 1437,
-      },
-      {
-        artist: "Toto",
-        title: "Hold the Line",
-        start: 1723,
-      },
-      {
-        artist: "Billy Idol",
-        title: "White Wedding",
-        start: 1944,
-      },
-      {
-        artist: "Kiss",
-        title: "Strutter",
-        start: 2244,
-      },
-      {
-        artist: "Boston",
-        title: "Smokin'",
-        start: 2429,
-      },
-      {
-        artist: "The Who",
-        title: "Eminence Front",
-        start: 2653,
-      },
-      {
-        artist: "Lynyrd Skynyrd",
-        title: "Free Bird",
-        start: 2946,
-      },
-      {
-        artist: "Joe Cocker",
-        title: "Woman to Woman",
-        start: 3296,
+        start: 14,
       },
       {
         artist:
           "Creedence Clearwater Revival",
         title: "Green River",
-        start: 3589,
+        start: 210,
+      },
+      {
+        artist: "Heart",
+        title: "Barracuda",
+        start: 364,
+      },
+      {
+        artist: "KISS",
+        title: "Strutter",
+        start: 567,
+      },
+      {
+        artist: "Toto",
+        title: "Hold the Line",
+        start: 783,
+      },
+      {
+        artist: "Rod Stewart",
+        title: "Young Turks",
+        start: 1009,
+      },
+      {
+        artist: "Tom Petty",
+        title: "Runnin' Down A Dream",
+        start: 1280,
+      },
+      {
+        artist: "Joe Cocker",
+        title: "Woman To Woman",
+        start: 1543,
       },
       {
         artist: "Humble Pie",
-        title: "Get Down to It",
-        start: 3734,
+        title: "Get Down To It",
+        start: 1781,
+      },
+      {
+        artist: "Grand Funk Railroad",
+        title: "Some Kind Of Wonderful",
+        start: 1999,
+      },
+      {
+        artist: "Lynyrd Skynyrd",
+        title: "Free Bird",
+        start: 2217,
       },
       {
         artist: "America",
         title: "A Horse with No Name",
-        start: 3930,
+        start: 2585,
+      },
+      {
+        artist: "The Who",
+        title: "Eminence Front",
+        start: 2814,
+      },
+      {
+        artist: "Boston",
+        title: "Smokin'",
+        start: 3079,
+      },
+      {
+        artist: "David Bowie",
+        title:
+          "Somebody up There Likes Me",
+        start: 3300,
+      },
+      {
+        artist: "Eddie Money",
+        title:
+          "Two Tickets to Paradise",
+        start: 3548,
+      },
+      {
+        artist: "Billy Idol",
+        title: "White Wedding",
+        start: 3772,
       },
     ],
   },
@@ -158,83 +184,83 @@ const gtasaStations = [
       {
         artist: "Jerry Reed",
         title: "Amos Moses",
-        start: 0,
+        start: 21,
       },
       {
         artist:
           "Conway Twitty and Loretta Lynn",
         title:
           "Louisiana Woman, Mississippi Man",
-        start: 0,
+        start: 161,
       },
       {
         artist: "Hank Williams",
         title: "Hey Good Lookin'",
-        start: 0,
+        start: 352,
       },
       {
         artist: "Juice Newton",
         title: "Queen of Hearts",
-        start: 0,
+        start: 530,
       },
       {
         artist: "Statler Brothers",
         title: "New York City",
-        start: 0,
+        start: 746,
       },
       {
         artist: "Asleep At The Wheel",
         title:
           "The Letter That Johnny Walker Read",
-        start: 0,
+        start: 927,
       },
       {
         artist: "The Desert Rose Band",
         title: "One Step Forward",
-        start: 0,
+        start: 1130,
       },
       {
         artist: "Willie Nelson",
-        title: "Crazy (1961 Demo)",
-        start: 0,
+        title: "Crazy",
+        start: 1320,
       },
       {
         artist: "Patsy Cline",
         title:
           "Three Cigarettes in an Ashtray",
-        start: 0,
+        start: 1576,
       },
       {
         artist: "Statler Brothers",
         title: "Bed of Rose's",
-        start: 0,
+        start: 1721,
       },
       {
         artist: "Mickey Gilley",
         title: "Make the World Go Away",
-        start: 0,
+        start: 1893,
       },
       {
         artist: "Ed Bruce",
         title:
-          "Mammas Don't Let Your Babies Grow Up to Be Cowboys",
-        start: 0,
+          "Mamas Don't Let Your Babies Grow Up to Be Cowboys",
+        start: 2059,
       },
       {
         artist: "Merle Haggard",
         title: "Always Wanting You",
-        start: 0,
+        start: 2270,
       },
       {
         artist: "Whitey Shafer",
         title:
-          "All My Ex's Live in Texas",
-        start: 0,
+          "All My Exes Live In Texas",
+        start: 2464,
       },
       {
         artist: "Eddie Rabbitt",
-        title: "I Love a Rainy Night",
-        start: 0,
+        title: "I Love A Rainy Night",
+        start: 2710,
       },
     ],
   },
@@ -251,85 +277,84 @@ const gtasaStations = [
       {
         artist: "Black Harmony",
         title:
-          "Don't Let It Go to Your Head",
-        start: 0,
+          "Don't Let It Get to Your Head",
+        start: 30,
       },
       {
         artist: "Blood Sisters",
         title: "Ring My Bell",
-        start: 0,
+        start: 260,
       },
       {
         artist: "Shabba Ranks",
         title: "Wicked Inna Bed",
-        start: 0,
+        start: 495,
       },
       {
         artist: "Buju Banton",
         title: "Batty Rider",
-        start: 0,
+        start: 707,
       },
       {
         artist: "Augustus Pablo",
         title:
-          "King Tubby Meets Rockers Uptown",
-        start: 0,
+          "King Tubby Meets the Rockers Uptown",
+        start: 935,
       },
       {
         artist: "Dennis Brown",
         title: "Revolution",
-        start: 0,
+        start: 1110,
       },
       {
         artist: "Willi Williams",
         title: "Armagideon Time",
-        start: 0,
+        start: 1358,
       },
       {
         artist: "I-Roy",
         title: "Sidewalk Killer",
-        start: 0,
+        start: 1513,
       },
       {
-        artist: "Toots & The Maytals",
+        artist: "The Maytals",
         title: "Funky Kingston",
-        start: 0,
+        start: 1747,
       },
       {
         artist: "Dillinger",
-        title: "Cokane in My Brain",
-        start: 0,
+        title: "Cocaine In My Brain",
+        start: 1981,
       },
       {
         artist: "Toots & The Maytals",
         title: "Pressure Drop",
-        start: 0,
+        start: 2220,
       },
       {
         artist: "Pliers",
         title: "Bam Bam",
-        start: 0,
+        start: 2469,
       },
       {
         artist: "Barrington Levy",
         title: "Here I Come",
-        start: 0,
+        start: 2700,
       },
       {
         artist: "Reggie Stepper",
         title: "Drum Pan Sound",
-        start: 0,
+        start: 2965,
       },
       {
         artist: "Black Uhuru",
         title: "Great Train Robbery",
-        start: 0,
+        start: 3188,
       },
       {
-        artist:
-          "Max Romeo & The Upsetters",
+        artist: "Max Romeo",
         title: "Chase The Devil",
-        start: 0,
+        start: 3445,
       },
     ],
   },
@@ -345,69 +370,69 @@ const gtasaStations = [
       {
         artist: "SWV",
         title: "I'm So Into You",
-        start: 0,
+        start: 23,
       },
       {
         artist: "Soul II Soul",
         title: "Keep On Movin'",
-        start: 0,
+        start: 269,
       },
       {
         artist: "Samuelle",
         title:
           "So You Like What You See",
-        start: 0,
+        start: 575,
       },
       {
         artist: "Johnny Gill",
-        title: "Rub You the Right Way",
-        start: 0,
+        title: "Rub You The Right Way",
+        start: 819,
       },
       {
         artist: "Ralph Tresvant",
         title: "Sensitivity",
-        start: 0,
+        start: 1090,
       },
       {
         artist: "Guy",
         title: "Groove Me",
-        start: 0,
+        start: 1346,
       },
       {
         artist: "Aaron Hall",
         title: "Don't Be Afraid",
-        start: 0,
+        start: 1611,
       },
       {
         artist: "Boyz II Men",
         title: "Motownphilly",
-        start: 0,
+        start: 1841,
       },
       {
         artist: "Bell Biv DeVoe",
         title: "Poison",
-        start: 0,
+        start: 2075,
       },
       {
         artist: "Today",
-        title: "I Got the Feeling",
-        start: 0,
+        title: "I Got The Feeling",
+        start: 2342,
       },
       {
         artist: "Wreckx-n-Effect",
         title: "New Jack Swing",
-        start: 0,
+        start: 2545,
       },
       {
         artist: "Bobby Brown",
         title: "Don't Be Cruel",
-        start: 0,
+        start: 2753,
       },
       {
         artist: "En Vogue",
         title:
           "My Lovin' (You're Never Gonna Get It)",
-        start: 0,
+        start: 2965,
       },
     ],
   },
@@ -424,78 +449,78 @@ const gtasaStations = [
       {
         artist: "Helmet",
         title: "Unsung",
-        start: 0,
+        start: 23,
       },
       {
         artist: "Depeche Mode",
         title: "Personal Jesus",
-        start: 0,
+        start: 257,
       },
       {
         artist: "Faith No More",
         title: "Midlife Crisis",
-        start: 0,
+        start: 513,
       },
       {
         artist: "Danzig",
         title: "Mother",
-        start: 0,
+        start: 820,
       },
       {
         artist: "Living Colour",
-        title: "Cult of Personality",
-        start: 0,
+        title: "Cult Of Personality",
+        start: 1144,
       },
       {
         artist: "Primal Scream",
-        title: "Movin' on Up",
-        start: 0,
+        title: "Movin' On Up",
+        start: 1442,
       },
       {
         artist: "Guns N' Roses",
-        title: "Welcome to the Jungle",
-        start: 0,
+        title: "Welcome To The Jungle",
+        start: 1660,
       },
       {
         artist: "L7",
         title: "Pretend We're Dead",
-        start: 0,
+        start: 1951,
       },
       {
         artist: "Ozzy Osbourne",
         title: "Hellraiser",
-        start: 0,
+        start: 2186,
       },
       {
         artist: "Soundgarden",
         title: "Rusty Cage",
-        start: 0,
+        start: 2436,
       },
       {
         artist:
-          "Rage Against the Machine",
-        title: "Killing in the Name",
-        start: 0,
+          "Rage Against The Machine",
+        title: "Killing In The Name",
+        start: 2702,
       },
       {
         artist: "Jane's Addiction",
         title: "Been Caught Stealing",
-        start: 0,
+        start: 3017,
       },
       {
         artist: "The Stone Roses",
         title: "Fools Gold",
-        start: 0,
+        start: 3226,
       },
       {
-        artist: "Alice in Chains",
+        artist: "Alice In Chains",
         title: "Them Bones",
-        start: 0,
+        start: 3629,
       },
       {
         artist: "Stone Temple Pilots",
         title: "Plush",
-        start: 0,
+        start: 3784,
       },
     ],
   },
@@ -510,93 +535,87 @@ const gtasaStations = [
       "media/gtasa/radio-los-santos.mp3",
     tracks: [
       {
-        artist: "2Pac (feat. Pogo)",
-        title: "I Don't Give a Fuck",
-        start: 0,
+        artist: "2Pac",
+        title: "I Don't Give A Fuck",
+        start: 28,
       },
       {
         artist: "Compton's Most Wanted",
         title: "Hood Took Me Under",
-        start: 0,
+        start: 310,
       },
       {
-        artist:
-          "Dr. Dre (feat. Snoop Dogg)",
+        artist: "Dr. Dre",
         title:
           "Nuthin' But A 'G' Thang",
-        start: 0,
+        start: 574,
       },
       {
         artist: "Too $hort",
         title: "The Ghetto",
-        start: 0,
+        start: 808,
       },
       {
         artist: "N.W.A.",
-        title: "Alwayz into Somethin'",
-        start: 0,
+        title: "Alwayz Into Somethin'",
+        start: 1080,
       },
       {
-        artist:
-          "Ice Cube (feat. Das EFX)",
-        title:
-          "Check Yo Self (The Message Remix)",
-        start: 0,
+        artist: "Ice Cube",
+        title: "Check Yo Self",
+        start: 1344,
       },
       {
         artist: "Kid Frost",
         title: "La Raza",
-        start: 0,
+        start: 1595,
       },
       {
         artist: "Cypress Hill",
         title:
-          "How I Could Just Kill a Man",
-        start: 0,
+          "How I Could Just Kill A Man",
+        start: 1836,
       },
       {
-        artist:
-          "Dr. Dre (feat. Snoop Dogg)",
+        artist: "Dr. Dre",
         title:
-          "Fuck wit Dre Day (And Everybody's Celebratin')",
-        start: 0,
+          "Fuck Wit Dre Day (And Everybody's Celebratin')",
+        start: 2083,
       },
       {
         artist: "The D.O.C.",
         title: "It's Funky Enough",
-        start: 0,
+        start: 2365,
       },
       {
         artist: "N.W.A.",
         title: "Express Yourself",
-        start: 0,
+        start: 2609,
       },
       {
         artist: "Ice Cube",
-        title: "It Was a Good Day",
-        start: 0,
+        title: "It Was A Good Day",
+        start: 2869,
       },
       {
         artist: "Eazy-E",
         title: "Eazy-Er Said Than Dunn",
-        start: 0,
+        start: 3099,
       },
       {
-        artist: "Above the Law",
+        artist: "Above The Law",
         title: "Murder Rap",
-        start: 0,
+        start: 3347,
       },
       {
-        artist:
-          "Dr. Dre (feat. Snoop Dogg)",
+        artist: "Dr. Dre",
         title: "Deep Cover",
-        start: 0,
+        start: 3592,
       },
       {
-        artist:
-          "Da Lench Mob (feat. Ice Cube)",
-        title: "Guerillas in tha Mist",
-        start: 0,
+        artist: "Da Lench Mob",
+        title: "Guerillas In Tha Mist",
+        start: 3841,
       },
     ],
   },
@@ -613,91 +632,88 @@ const gtasaStations = [
       {
         artist: "Dazz Band",
         title: "Let It Whip",
-        start: 0,
+        start: 14,
       },
       {
         artist: "Fatback Band",
         title: "Yum Yum (Gimme Some)",
-        start: 0,
+        start: 258,
       },
       {
         artist: "Gap Band",
         title:
-          "You Dropped a Bomb on Me",
-        start: 0,
+          "You Dropped A Bomb On Me",
+        start: 523,
       },
       {
-        artist: "Kool & the Gang",
+        artist: "Kool & The Gang",
         title: "Hollywood Swinging",
-        start: 0,
+        start: 762,
       },
       {
         artist: "Cameo",
         title: "Candy",
-        start: 0,
+        start: 1038,
       },
       {
-        artist:
-          "MFSB feat. The Three Degrees",
-        title:
-          "Love Is The Message (Love Groove Bonus)",
-        start: 0,
+        artist: "MFSB",
+        title: "Love Is The Message",
+        start: 1389,
       },
       {
         artist: "Johnny Harris",
-        title: 'Odyssey (7" Single)',
-        start: 0,
+        title: "Odyssey",
+        start: 1617,
       },
       {
         artist: "Roy Ayers",
         title: "Running Away",
-        start: 0,
+        start: 1867,
       },
       {
         artist: "Ohio Players",
         title: "Love Rollercoaster",
-        start: 0,
+        start: 2144,
       },
       {
         artist: "The Isley Brothers",
         title: "Between The Sheets",
-        start: 0,
+        start: 2453,
       },
       {
         artist: "Zapp",
         title: "I Can Make You Dance",
-        start: 0,
+        start: 2720,
       },
       {
         artist: "Rick James",
         title: "Cold Blooded",
-        start: 0,
+        start: 2991,
       },
       {
-        artist:
-          "Ronnie Hudson and The Street People",
+        artist: "Ronnie Hudson",
         title: "West Coast Poplock",
-        start: 0,
+        start: 3233,
       },
       {
         artist: "George Clinton",
         title: "Loopzilla",
-        start: 0,
+        start: 3501,
       },
       {
         artist: "Ohio Players",
         title: "Funky Worm",
-        start: 0,
+        start: 3763,
       },
       {
         artist: "Maze",
         title: "Twilight",
-        start: 0,
+        start: 3995,
       },
       {
         artist: "Lakeside",
         title: "Fantastic Voyage",
-        start: 0,
+        start: 4244,
       },
     ],
   },
@@ -711,95 +727,86 @@ const gtasaStations = [
     audioFile: "media/gtasa/sf-ur.mp3",
     tracks: [
       {
-        artist:
-          "Joe Smooth feat. Anthony Thomas",
-        title:
-          "Promised Land (Club Mix)",
-        start: 0,
+        artist: "Joe Smooth",
+        title: "Promised Land",
+        start: 8,
       },
       {
         artist: "808 State",
         title: "Pacific 202",
-        start: 0,
+        start: 280,
       },
       {
         artist: "A Guy Called Gerald",
-        title:
-          "Voodoo Ray (Original Mix)",
-        start: 0,
+        title: "Voodoo Ray",
+        start: 529,
       },
       {
-        artist:
-          "Frankie Knuckles feat. Jamie Principle",
+        artist: "Frankie Knuckles",
         title: "Your Love",
-        start: 0,
+        start: 806,
       },
       {
         artist: "Raze",
         title: "Break 4 Love",
-        start: 0,
+        start: 1061,
       },
       {
         artist: "Cultural Vibe",
-        title:
-          "Ma Foom Bey (Love Chant Version)",
-        start: 0,
+        title: "Ma Foom Bey",
+        start: 1337,
       },
       {
         artist: "Jomanda",
-        title:
-          "Make My Body Rock (The Basic Mix)",
-        start: 0,
+        title: "Make My Body Rock",
+        start: 1589,
       },
       {
         artist: "CeCe Rogers",
         title: "Someday",
-        start: 0,
+        start: 1861,
       },
       {
         artist: "The Night Writers",
         title: "Let The Music Use You",
-        start: 0,
+        start: 2139,
       },
       {
         artist: "Mr. Fingers",
-        title:
-          "Can You Feel It? (Chuck D. Mix)",
-        start: 0,
+        title: "Can You Feel It",
+        start: 2396,
       },
       {
         artist: "Marshall Jefferson",
         title: "Move Your Body",
-        start: 0,
+        start: 2667,
       },
       {
         artist: "Maurice",
         title:
-          "This Is Acid (A New Dance Craze) (K & T Mix)",
-        start: 0,
+          "This Is Acid (A New Dance Craze)",
+        start: 2934,
       },
       {
         artist:
           "The Todd Terry Project",
         title: "Weekend",
-        start: 0,
+        start: 3190,
       },
       {
         artist: "Fallout",
-        title:
-          "The Morning After (Sunrise Mix)",
-        start: 0,
+        title: "The Morning After",
+        start: 3440,
       },
       {
         artist: "Robert Owens",
-        title:
-          "I'll Be Your Friend (Original DEF Mix)",
-        start: 0,
+        title: "I'll Be Your Friend",
+        start: 3694,
       },
       {
         artist: "The 28th Street Crew",
         title: "I Need A Rhythm",
-        start: 0,
+        start: 3958,
       },
     ],
   },
@@ -815,99 +822,101 @@ const gtasaStations = [
     tracks: [
       {
         artist:
-          "Charles Wright & the Watts 103rd Street Rhythm Band",
+          "Charles Wright & The Watts 103rd Street Rhythm Band",
         title: "Express Yourself",
-        start: 0,
+        start: 36,
       },
       {
         artist: "Maceo & The Macks",
         title:
           "Cross The Tracks (We Better Go Back)",
-        start: 0,
+        start: 273,
       },
       {
         artist:
           "Harlem Underground Band",
         title: "Smokin' Cheeba Cheeba",
-        start: 0,
+        start: 508,
       },
       {
         artist: "The Chakachas",
         title: "Jungle Fever",
-        start: 0,
+        start: 766,
       },
       {
         artist: "Bob James",
         title: "Nautilus",
-        start: 0,
+        start: 983,
       },
       {
-        artist: "Booker T. & the MG's",
+        artist: "Booker T. & The MG's",
         title: "Green Onions",
-        start: 0,
+        start: 1240,
       },
       {
         artist: "The Blackbyrds",
         title: "Rock Creek Park",
-        start: 0,
+        start: 1512,
       },
       {
         artist: "Bobby Byrd",
-        title: "Hot Pants",
-        start: 0,
+        title:
+          "Hot Pants - I'm Coming, I'm Coming, I'm Coming",
+        start: 1732,
       },
       {
         artist: "James Brown",
-        title: "Funky President",
-        start: 0,
+        title:
+          "Funky President (People It's Bad)",
+        start: 1977,
       },
       {
         artist: "Lyn Collins",
         title:
-          "Rock Me Again And Again",
-        start: 0,
+          "Rock Me Again & Again & Again & Again & Again & Again",
+        start: 2237,
       },
       {
         artist: "Maceo & The Macks",
         title: "Soul Power '74",
-        start: 0,
+        start: 2494,
       },
       {
         artist: "Bobby Byrd",
         title: "I Know You Got Soul",
-        start: 0,
+        start: 2760,
       },
       {
         artist: "James Brown",
         title: "The Payback",
-        start: 0,
+        start: 3020,
       },
       {
         artist: "Lyn Collins",
         title: "Think (About It)",
-        start: 0,
+        start: 3315,
       },
       {
         artist: "The JB's",
         title: "The Grunt",
-        start: 0,
+        start: 3571,
       },
       {
         artist: "War",
         title: "Low Rider",
-        start: 0,
+        start: 3827,
       },
       {
         artist: "Gloria Jones",
         title: "Tainted Love",
-        start: 0,
+        start: 4050,
       },
       {
         artist:
           "Sir Joe Quarterman & Free Soul",
         title:
           "(I Got) So Much Trouble In My Mind",
-        start: 0,
+        start: 4213,
       },
     ],
   },
