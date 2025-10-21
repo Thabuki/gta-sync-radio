@@ -18,8 +18,6 @@ Globally synchronized radio player inspired by GTA III, Vice City, and San Andre
 
 - **Logo centering offset**: Station and modal logos are intentionally nudged slightly to the left using hard-coded CSS offsets to achieve consistent visual centering across mixed assets and aspect ratios. Different values are used for desktop and mobile viewports, and the alignment may appear imperfect on intermediate or uncommon screen sizes.
 
-- **Skip to music (San Andreas)**: Clicking a track in San Andreas stations to jump directly to its start is currently unreliable or disabled for some tracks due to blocked/omitted songs and incomplete timestamp coverage. This is a known limitation and will be addressed in a future update.
-
 ## Usage
 
 1. Open `index.html`

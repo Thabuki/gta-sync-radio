@@ -215,34 +215,6 @@ audio::-webkit-media-controls-panel {
   color: #333;
 }
 
-/* Under Construction overlay for San Andreas clickable tracks */
-.tracklist li.sa-under-construction {
-  position: relative;
-  overflow: hidden;
-}
-.tracklist li .uc-overlay {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%)
-    rotate(-6deg);
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255, 193, 7, 0.95),
-    rgba(255, 193, 7, 0.95) 8px,
-    rgba(0, 0, 0, 0.15) 8px,
-    rgba(0, 0, 0, 0.15) 16px
-  );
-  color: #111;
-  font-weight: 900;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  padding: 4px 8px;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px
-    rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-}
 /* Theme-styled links inside modal tracklist */
 .tracklist a {
   text-decoration: none;
