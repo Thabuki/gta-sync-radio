@@ -120,17 +120,17 @@ const gtasaStations = [
       },
       {
         artist: "Joe Cocker",
-        title: "Woman To Woman",
+        title: "Woman to Woman",
         start: 1543,
       },
       {
         artist: "Humble Pie",
-        title: "Get Down To It",
+        title: "Get Down to It",
         start: 1781,
       },
       {
         artist: "Grand Funk Railroad",
-        title: "Some Kind Of Wonderful",
+        title: "Some Kind of Wonderful",
         start: 1999,
       },
       {
@@ -259,7 +259,7 @@ const gtasaStations = [
       },
       {
         artist: "Eddie Rabbitt",
-        title: "I Love A Rainy Night",
+        title: "I Love a Rainy Night",
         start: 2710,
       },
     ],
@@ -323,7 +323,7 @@ const gtasaStations = [
       },
       {
         artist: "Dillinger",
-        title: "Cocaine In My Brain",
+        title: "Cocaine in My Brain",
         start: 1981,
       },
       {
@@ -353,7 +353,7 @@ const gtasaStations = [
       },
       {
         artist: "Max Romeo",
-        title: "Chase The Devil",
+        title: "Chase the Devil",
         start: 3445,
       },
     ],
@@ -385,7 +385,7 @@ const gtasaStations = [
       },
       {
         artist: "Johnny Gill",
-        title: "Rub You The Right Way",
+        title: "Rub You the Right Way",
         start: 819,
       },
       {
@@ -415,7 +415,7 @@ const gtasaStations = [
       },
       {
         artist: "Today",
-        title: "I Got The Feeling",
+        title: "I Got the Feeling",
         start: 2342,
       },
       {
@@ -468,17 +468,17 @@ const gtasaStations = [
       },
       {
         artist: "Living Colour",
-        title: "Cult Of Personality",
+        title: "Cult of Personality",
         start: 869,
       },
       {
         artist: "Primal Scream",
-        title: "Movin' On Up",
+        title: "Movin' on Up",
         start: 1078,
       },
       {
         artist: "Guns N' Roses",
-        title: "Welcome To The Jungle",
+        title: "Welcome to the Jungle",
         start: 1269,
       },
       {
@@ -499,7 +499,7 @@ const gtasaStations = [
       {
         artist:
           "Rage Against The Machine",
-        title: "Killing In The Name",
+        title: "Killing in the Name",
         start: 2179,
       },
       {
@@ -614,7 +614,7 @@ const gtasaStations = [
       },
       {
         artist: "Da Lench Mob",
-        title: "Guerillas In Tha Mist",
+        title: "Guerillas in tha Mist",
         start: 3841,
       },
     ],
@@ -642,7 +642,7 @@ const gtasaStations = [
       {
         artist: "Gap Band",
         title:
-          "You Dropped A Bomb On Me",
+          "You Dropped a Bomb on Me",
         start: 523,
       },
       {
@@ -657,7 +657,7 @@ const gtasaStations = [
       },
       {
         artist: "MFSB",
-        title: "Love Is The Message",
+        title: "Love is the Message",
         start: 1389,
       },
       {
@@ -677,7 +677,7 @@ const gtasaStations = [
       },
       {
         artist: "The Isley Brothers",
-        title: "Between The Sheets",
+        title: "Between the Sheets",
         start: 2453,
       },
       {
@@ -768,7 +768,7 @@ const gtasaStations = [
       },
       {
         artist: "The Night Writers",
-        title: "Let The Music Use You",
+        title: "Let the Music Use You",
         start: 2139,
       },
       {
@@ -784,7 +784,7 @@ const gtasaStations = [
       {
         artist: "Maurice",
         title:
-          "This Is Acid (A New Dance Craze)",
+          "This Is Acid (a New Dance Craze)",
         start: 2934,
       },
       {

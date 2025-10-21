@@ -311,7 +311,7 @@ const viceCityStations = [
       },
       {
         artist: "Quiet Riot",
-        title: "Cum On Feel the Noize",
+        title: "Cum on Feel the Noize",
         start: 509,
       },
       {
@@ -514,7 +514,7 @@ const viceCityStations = [
       },
       {
         artist: "REO Speedwagon",
-        title: "Keep On Loving You",
+        title: "Keep on Loving You",
         start: 847,
       },
       {
@@ -572,7 +572,7 @@ const viceCityStations = [
     tracks: [
       {
         artist:
-          "Frankie Goes To Hollywood",
+          "Frankie Goes to Hollywood",
         title: "Two Tribes",
         start: 7,
       },
@@ -604,7 +604,7 @@ const viceCityStations = [
       },
       {
         artist: "Kim Wilde",
-        title: "Kids In America",
+        title: "Kids in America",
         start: 1445,
       },
       {
@@ -614,7 +614,7 @@ const viceCityStations = [
       },
       {
         artist: "Corey Hart",
-        title: "Sunglasses At Night",
+        title: "Sunglasses at Night",
         start: 1942,
       },
       {

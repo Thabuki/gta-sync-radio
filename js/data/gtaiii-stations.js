@@ -114,7 +114,7 @@ const gtaiiiStations = [
       },
       {
         artist: "Scientist",
-        title: "Your Teeth In My Neck",
+        title: "Your Teeth in My Neck",
         start: 241,
       },
       {
@@ -168,7 +168,7 @@ const gtaiiiStations = [
       },
       {
         artist: "Slyder",
-        title: "Neo (The One)",
+        title: "Neo (the One)",
         start: 841,
       },
       {
@@ -191,7 +191,7 @@ const gtaiiiStations = [
     tracks: [
       {
         artist: "Fatamarse",
-        title: "Bump To The Music",
+        title: "Bump to the Music",
         start: 74,
       },
       {
