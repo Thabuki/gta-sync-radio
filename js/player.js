@@ -219,18 +219,13 @@ function setupResyncButton() {
         PlayerState.currentStation &&
         !resyncBtn.disabled
       ) {
+        // Clear userDesynced flag immediately so sync can proceed
+        PlayerState.userDesynced = false;
+        
+        // Synchronize and let it update the button state when complete
         synchronizePlayback(
           PlayerState.currentStation
         );
-        // Visual feedback
-        resyncBtn.classList.add(
-          "synced"
-        );
-        resyncBtn.disabled = true;
-        resyncBtn.textContent =
-          "✓ Synced!";
-        PlayerState.isSynced = true;
-        PlayerState.userDesynced = false;
       }
     }
   );
