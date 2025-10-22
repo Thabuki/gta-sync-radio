@@ -221,7 +221,7 @@ function setupResyncButton() {
       ) {
         // Clear userDesynced flag immediately so sync can proceed
         PlayerState.userDesynced = false;
-        
+
         // Synchronize and let it update the button state when complete
         synchronizePlayback(
           PlayerState.currentStation
