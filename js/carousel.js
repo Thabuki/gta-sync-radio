@@ -902,12 +902,23 @@ function updateCarousel(
 
   carouselElement.style.transform = `translateX(${translateX}px)`;
 
+  // Determine if autoplay is allowed yet: only after the user's first explicit click started playback
+  const audioEl =
+    document.getElementById(
+      "audioPlayer"
+    );
+  const autoplayAllowed =
+    firstInteractionHandled ||
+    (audioEl &&
+      !audioEl.paused &&
+      !!audioEl.src);
+
   // Cancel any pending autoplay debounce before scheduling a new one
   if (autoplayDebounceTimer) {
     clearTimeout(autoplayDebounceTimer);
     autoplayDebounceTimer = null;
   }
-  // Schedule playback when transition completes (or debounced if no transition)
+  // Schedule playback when transition completes (or debounced if no transition), but only if autoplay is allowed
   const currentStationData =
     radioStations[window.currentIndex];
   if (withTransition) {
@@ -918,6 +929,7 @@ function updateCarousel(
     playAfterTransitionTimer =
       setTimeout(() => {
         isTransitioning = false;
+        if (!autoplayAllowed) return; // Do not auto-start until the user clicks
         // Only trigger playback handoff if not already playing this station
         const alreadyThisStation =
           lastPlayedStationId ===
@@ -942,32 +954,31 @@ function updateCarousel(
       }, 320);
   } else {
     isTransitioning = false;
-    const alreadyThisStation =
-      lastPlayedStationId ===
-      currentStationData.id;
-    if (!alreadyThisStation) {
-      autoplayDebounceTimer =
-        setTimeout(() => {
-          if (
-            lastPlayedStationId !==
-            currentStationData.id
-          ) {
-            playStaticThenStation(
-              currentStationData
-            );
-            lastPlayedStationId =
-              currentStationData.id;
-          }
-        }, AUTOPLAY_DEBOUNCE_MS);
+    if (autoplayAllowed) {
+      const alreadyThisStation =
+        lastPlayedStationId ===
+        currentStationData.id;
+      if (!alreadyThisStation) {
+        autoplayDebounceTimer =
+          setTimeout(() => {
+            if (
+              lastPlayedStationId !==
+              currentStationData.id
+            ) {
+              playStaticThenStation(
+                currentStationData
+              );
+              lastPlayedStationId =
+                currentStationData.id;
+            }
+          }, AUTOPLAY_DEBOUNCE_MS);
+      }
     }
   }
 
   // Update active state based only on station index.
   // This keeps both the clone and the real card active during the snap, avoiding visual flicker.
-  const audioEl =
-    document.getElementById(
-      "audioPlayer"
-    );
+  // recompute playing state for UI
   const isPlaying =
     audioEl &&
     !audioEl.paused &&
