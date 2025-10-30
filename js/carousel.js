@@ -1082,6 +1082,14 @@ function applyThemeWithFade(game) {
     document.getElementById("bgFader");
   if (!body) return;
 
+  // Check if theme is already applied - skip fade if no change
+  const targetTheme = `theme-${game}`;
+  if (
+    body.classList.contains(targetTheme)
+  ) {
+    return; // Already on this theme, no need to fade
+  }
+
   // Respect reduced motion
   if (reduceMotion) {
     body.classList.remove(
