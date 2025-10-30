@@ -16,6 +16,13 @@ Globally synchronized radio player inspired by GTA III, Vice City, and San Andre
 
 - **Sync drift**: There may be a drift of approximately 20 seconds between users due to network latency, buffer delays, and browser-specific playback timing. The Re-sync button can help minimize this drift.
 
+- **iOS Safari Background Playback**: iOS Safari has strict limitations on background audio for web apps. When you minimize Safari or switch to another app, the audio may pause. The app will attempt to resume playback when you return, and lock screen controls should work. For best results on iOS:
+
+  - Add the app to your home screen (tap Share → Add to Home Screen) for standalone mode
+  - Keep Safari in the foreground while listening
+  - Use the lock screen controls to play/pause
+  - Note: True background playback like native apps is not fully supported by iOS Safari for web apps
+
 - **Logo centering offset**: Station and modal logos are intentionally nudged slightly to the left using hard-coded CSS offsets to achieve consistent visual centering across mixed assets and aspect ratios. Different values are used for desktop and mobile viewports, and the alignment may appear imperfect on intermediate or uncommon screen sizes.
 
 ## Usage

@@ -1,6 +1,10 @@
 // Media Session API for iOS lock screen controls and background playback
 function updateMediaSession(station) {
   if ("mediaSession" in navigator) {
+    // Set playback state to playing to indicate active audio
+    navigator.mediaSession.playbackState =
+      "playing";
+
     navigator.mediaSession.metadata =
       new MediaMetadata({
         title: station.name,
@@ -32,8 +36,13 @@ function updateMediaSession(station) {
       () => {
         const { audioPlayer } =
           PlayerState;
-        if (audioPlayer)
-          audioPlayer.play();
+        if (audioPlayer) {
+          audioPlayer
+            .play()
+            .catch(() => {});
+          navigator.mediaSession.playbackState =
+            "playing";
+        }
       }
     );
 
@@ -42,8 +51,11 @@ function updateMediaSession(station) {
       () => {
         const { audioPlayer } =
           PlayerState;
-        if (audioPlayer)
+        if (audioPlayer) {
           audioPlayer.pause();
+          navigator.mediaSession.playbackState =
+            "paused";
+        }
       }
     );
 
@@ -67,5 +79,17 @@ function updateMediaSession(station) {
   }
 }
 
+// Update playback state when audio starts/stops
+function updateMediaSessionPlaybackState(
+  state
+) {
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.playbackState =
+      state; // "playing", "paused", or "none"
+  }
+}
+
 window.updateMediaSession =
   updateMediaSession;
+window.updateMediaSessionPlaybackState =
+  updateMediaSessionPlaybackState;

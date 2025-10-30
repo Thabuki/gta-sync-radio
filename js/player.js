@@ -71,6 +71,35 @@ function initPlayer() {
   setupVolumeControl();
   setupVisualizer();
 
+  // Update Media Session playback state when audio plays/pauses
+  PlayerState.audioPlayer.addEventListener(
+    "play",
+    () => {
+      if (
+        typeof window.updateMediaSessionPlaybackState ===
+        "function"
+      ) {
+        window.updateMediaSessionPlaybackState(
+          "playing"
+        );
+      }
+    }
+  );
+
+  PlayerState.audioPlayer.addEventListener(
+    "pause",
+    () => {
+      if (
+        typeof window.updateMediaSessionPlaybackState ===
+        "function"
+      ) {
+        window.updateMediaSessionPlaybackState(
+          "paused"
+        );
+      }
+    }
+  );
+
   // Handle audio looping
   PlayerState.audioPlayer.addEventListener(
     "ended",
@@ -113,36 +142,59 @@ function initPlayer() {
     }
   );
 
-  // iOS Safari: prevent audio pause when page is backgrounded/minimized
+  // iOS Safari: handle page visibility changes
+  // Note: iOS Safari has limitations with background audio for web apps
+  // Audio may pause when Safari is minimized; this attempts to resume when app returns
   document.addEventListener(
     "visibilitychange",
     () => {
-      if (document.hidden) {
-        // Page is backgrounded; try to keep audio playing
-        if (
-          PlayerState.audioPlayer &&
-          !PlayerState.audioPlayer
-            .paused &&
-          PlayerState.currentStation
-        ) {
-          // Force resume if Safari paused it
-          PlayerState.audioPlayer
-            .play()
-            .catch(() => {
-              // Silently ignore if browser blocks autoplay
-            });
-        }
-      } else {
-        // Page is visible again; ensure playback continues
+      if (!document.hidden) {
+        // Page is visible again; resume if we had a station playing
         if (
           PlayerState.audioPlayer &&
           PlayerState.currentStation &&
           PlayerState.audioPlayer.paused
         ) {
+          // Small delay helps iOS audio resume more reliably
+          setTimeout(() => {
+            PlayerState.audioPlayer
+              .play()
+              .catch(() => {});
+          }, 100);
+        }
+      }
+    }
+  );
+
+  // iOS-specific: handle page freeze/resume events
+  document.addEventListener(
+    "freeze",
+    () => {
+      // iOS is about to suspend the page
+      if (
+        PlayerState.audioPlayer &&
+        !PlayerState.audioPlayer.paused
+      ) {
+        PlayerState.wasPlayingBeforeFreeze = true;
+      }
+    }
+  );
+
+  document.addEventListener(
+    "resume",
+    () => {
+      // iOS resumed the page
+      if (
+        PlayerState.wasPlayingBeforeFreeze &&
+        PlayerState.audioPlayer &&
+        PlayerState.currentStation
+      ) {
+        PlayerState.wasPlayingBeforeFreeze = false;
+        setTimeout(() => {
           PlayerState.audioPlayer
             .play()
             .catch(() => {});
-        }
+        }, 100);
       }
     }
   );

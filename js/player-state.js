@@ -6,6 +6,7 @@ const PlayerState = {
   isSynced: false,
   userDesynced: false,
   toastTimer: null,
+  wasPlayingBeforeFreeze: false, // Track playback state for iOS freeze/resume
   viz: {
     ctx: null,
     canvas: null,
